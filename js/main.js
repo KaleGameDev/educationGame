@@ -1,6 +1,61 @@
 // ==========================================
+// CẤU HÌNH ÂM THANH (AUDIO ENGINE)
+// ==========================================
+const sndButton = new Audio('assets/audio/Button.wav');
+const sndFail = new Audio('assets/audio/Fail.wav');
+const sndComplete = new Audio('assets/audio/Complete.wav');
+const sndAfterFail = new Audio('assets/audio/AfterFail.wav');
+const sndAfterComplete = new Audio('assets/audio/AfterComplete.wav');
+
+// Nhạc nền (Loop liên tục)
+const sndBGM = new Audio('assets/audio/BackgroundGame.wav');
+sndBGM.loop = true;
+sndBGM.volume = 0.3; // Nhạc nền nên để âm lượng nhỏ (30%) để không lấn át tiếng click
+
+let isMuted = false;
+
+// Hàm kích hoạt phát âm thanh đa luồng (tránh bị đè âm khi click nhanh)
+function playSound(type) {
+    if (isMuted) return;
+    
+    let snd;
+    if (type === 'button') snd = sndButton.cloneNode();
+    else if (type === 'fail') snd = sndFail.cloneNode();
+    else if (type === 'complete') snd = sndComplete.cloneNode();
+    else if (type === 'after-fail') snd = sndAfterFail.cloneNode();
+    else if (type === 'after-complete') snd = sndAfterComplete.cloneNode();
+    
+    if (snd) {
+        snd.volume = 0.7; // Âm lượng hiệu ứng SFX (70%)
+        snd.play().catch(e => console.log('Auto-play bị chặn bởi trình duyệt:', e));
+    }
+}
+
+// Hàm Bật/Tắt âm thanh toàn cục (Cho nút loa ở góc phải dưới)
+function toggleAudio() {
+    isMuted = !isMuted;
+    const iconOn = document.getElementById('icon-vol-on');
+    const iconOff = document.getElementById('icon-vol-off');
+
+    if (isMuted) {
+        iconOn.classList.add('hidden');
+        iconOff.classList.remove('hidden');
+        sndBGM.pause(); // Tắt nhạc nền
+    } else {
+        iconOn.classList.remove('hidden');
+        iconOff.classList.add('hidden');
+        playSound('button'); // Phát tiếng click nhẹ để báo hiệu đã bật
+        sndBGM.play().catch(e => console.log(e)); // Bật lại nhạc nền
+    }
+}
+
+
+// ==========================================
 // THAM CHIẾU DOM UI
 // ==========================================
+const mainMenuScreen = document.getElementById('main-menu-screen');
+const mainHeader = document.getElementById('main-header');
+
 const roleScreen = document.getElementById('role-selection-screen');
 const gameScreen = document.getElementById('gameplay-screen');
 const container = document.getElementById('game-container');
@@ -23,14 +78,70 @@ const topNavTitle = document.getElementById('top-nav-title');
 const topNavSub = document.getElementById('top-nav-sub');     
 const btnResetRole = document.getElementById('btn-reset-role'); 
 
+const confirmModal = document.getElementById('confirm-reset-modal');
+
 let activeMobileCardIndex = 0; 
 let transitionTimer = null; 
 const DEFAULT_BG = "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1932&auto=format&fit=crop";
 
 // ==========================================
-// HÀM KHỞI CHẠY GAME
+// HÀM KHỞI CHẠY GAME TỪ MENU CHÍNH
+// ==========================================
+function startGame() {
+    playSound('button'); 
+    
+    if (mainMenuScreen) {
+        mainMenuScreen.classList.add('hidden');
+        mainMenuScreen.classList.remove('flex');
+    }
+    
+    if (mainHeader) {
+        mainHeader.classList.remove('hidden');
+        mainHeader.classList.add('flex');
+    }
+
+    if (roleScreen) {
+        roleScreen.classList.remove('hidden');
+        roleScreen.classList.add('flex', 'animate__fadeIn');
+    }
+    
+    updateMobileDots();
+
+    // Bật nhạc nền ngay khi người chơi tương tác lần đầu (Vượt qua chính sách chặn Audio của Trình duyệt)
+    if (!isMuted) {
+        sndBGM.play().catch(e => console.log('Chưa thể phát nhạc nền:', e));
+    }
+}
+
+// ==========================================
+// HÀM HIỂN THỊ VÀ ẨN BẢNG XÁC NHẬN (CONFIRM MODAL)
+// ==========================================
+function showConfirmModal() {
+    playSound('button'); 
+    if (confirmModal) {
+        confirmModal.classList.remove('hidden');
+        confirmModal.classList.add('flex', 'animate__fadeIn');
+        const modalContent = confirmModal.querySelector('div');
+        modalContent.classList.remove('animate__zoomIn');
+        void modalContent.offsetWidth; 
+        modalContent.classList.add('animate__zoomIn');
+    }
+}
+
+function closeConfirmModal() {
+    playSound('button'); 
+    if (confirmModal) {
+        confirmModal.classList.add('hidden');
+        confirmModal.classList.remove('flex', 'animate__fadeIn');
+    }
+}
+
+// ==========================================
+// HÀM KHỞI CHẠY TỪNG NHÂN VẬT
 // ==========================================
 function startRole(role) {
+    playSound('button'); 
+
     roleScreen.classList.add('hidden');
     roleScreen.classList.remove('flex');
     
@@ -66,9 +177,11 @@ function startRole(role) {
 }
 
 // ==========================================
-// HÀM RESET GAME AN TOÀN
+// HÀM RESET GAME CHÍNH 
 // ==========================================
 function resetGame() {
+    closeConfirmModal();
+
     if (transitionTimer) clearTimeout(transitionTimer); 
     
     if (resultOverlay) {
@@ -90,12 +203,11 @@ function resetGame() {
     }
 
     if (topNavTitle && topNavSub) {
-        topNavTitle.innerText = "GÓC KHUẤT BÀN CÙNG";
+        topNavTitle.innerText = "CHỌN NHÂN VẬT";
         topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-all duration-300";
         topNavSub.innerText = "Giáo dục về vấn nạn bạo lực học đường";
     }
 
-    // ĐÃ SỬA: overflow-visible để giữ hiệu ứng Pop-out
     gameScreen.className = "hidden w-full h-full max-h-[720px] shrink-0 flex-col md:flex-row items-stretch transition-all duration-300 min-h-0 overflow-visible relative mt-8 sm:mt-0";
 
     const cardMai = document.getElementById('card-mai');
@@ -173,7 +285,19 @@ function loadScene(sceneId) {
             btn.className = "w-full text-left bg-slate-800/90 hover:bg-slate-750 border border-slate-700 hover:border-slate-500 text-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg font-medium flex items-center justify-between group leading-normal sm:leading-relaxed shrink-0";
         }
         btn.innerHTML = `<span class="pr-2 sm:pr-4">${choice.text}</span>`;
-        btn.onclick = () => loadScene(choice.nextScene);
+        
+        // SỰ KIỆN CLICK LỰA CHỌN
+        btn.onclick = () => {
+            const nextData = STORY_DATA[choice.nextScene];
+            // Kêu Fail/Complete ngay lúc bấm (Trước khi màn hình tối xuống 1.2s)
+            if (nextData && nextData.isResult) {
+                let isSuccess = nextData.resultColor && nextData.resultColor.includes('emerald');
+                playSound(isSuccess ? 'complete' : 'fail');
+            } else {
+                playSound('button');
+            }
+            loadScene(choice.nextScene);
+        };
         choicesBoxEl.appendChild(btn);
     });
 
@@ -193,6 +317,9 @@ function showResultOverlay(data) {
     let isSuccess = data.resultColor && data.resultColor.includes('emerald');
     let badgeText = isSuccess ? "★ CAN THIỆP THÀNH CÔNG" : "⚠ HẬU QUẢ ĐÁNG TIẾC";
     
+    // Phát âm thanh phân tích (AfterFail hoặc AfterComplete) khi bảng kết quả hiện ra
+    playSound(isSuccess ? 'after-complete' : 'after-fail');
+
     if (resultBadge) {
         resultBadge.innerText = badgeText;
         if (isSuccess) {
@@ -234,7 +361,11 @@ function showResultOverlay(data) {
                 <svg class="w-6 h-6 transform group-hover:translate-x-2 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             `;
         }
-        btn.onclick = () => loadScene(choice.nextScene);
+        
+        btn.onclick = () => {
+            playSound('button');
+            loadScene(choice.nextScene);
+        };
         resultChoicesBox.appendChild(btn);
     });
 
@@ -246,6 +377,8 @@ function showResultOverlay(data) {
 // ĐIỀU KHIỂN SLIDER TRÊN ĐIỆN THOẠI (4 THẺ)
 // ==========================================
 function switchMobileCard(direction) {
+    playSound('button'); 
+    
     activeMobileCardIndex = (activeMobileCardIndex + direction + 4) % 4;
     
     const cards = [

@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Góc Khuất Bàn Cùng - Web Game Tương Tác</title>
-    <!-- Nhúng Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Nhúng Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
@@ -15,7 +13,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
     </style>
 </head>
-<body class="bg-slate-950 text-white font-sans select-none overflow-hidden h-screen w-screen">
+<body class="bg-slate-950 text-white font-sans select-none overflow-hidden h-screen w-screen relative">
 
     <!-- KHUNG GAME CHÍNH -->
     <div id="game-container" class="h-full w-full flex flex-col justify-between p-2 sm:p-4 md:p-6 lg:p-8 bg-cover bg-center transition-all duration-700 relative" style="background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1932&auto=format&fit=crop');">
@@ -23,17 +21,17 @@
         <div class="absolute inset-0 bg-black/70 backdrop-blur-[4px] pointer-events-none"></div>
 
         <!-- HEADER -->
-        <header class="relative z-30 py-2 sm:py-3 px-3 sm:px-0 flex flex-row justify-between items-center shrink-0 w-full max-w-7xl mx-auto gap-2">
+        <header id="main-header" class="hidden relative z-30 py-2 sm:py-3 px-3 sm:px-0 flex-row justify-between items-center shrink-0 w-full max-w-7xl mx-auto gap-2">
             <div class="flex-1 min-w-0">
                 <h1 id="top-nav-title" class="text-sm sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-all duration-300">
-                    GÓC KHUẤT BÀN CÙNG
+                    CHỌN NHÂN VẬT
                 </h1>
                 <p id="top-nav-sub" class="text-[10px] sm:text-xs md:text-sm text-slate-300 font-medium truncate drop-shadow transition-all duration-300">
                     Giáo dục về vấn nạn bạo lực học đường
                 </p>
             </div>
             
-            <button id="btn-reset-role" onclick="resetGame()" class="hidden bg-slate-900/90 hover:bg-slate-800 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-200 border border-slate-600 shadow-md items-center gap-1.5 shrink-0 active:scale-95">
+            <button id="btn-reset-role" onclick="showConfirmModal()" class="hidden bg-slate-900/90 hover:bg-slate-800 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-all duration-200 border border-slate-600 shadow-md items-center gap-1.5 shrink-0 active:scale-95">
                 <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                 </svg>
@@ -42,24 +40,41 @@
         </header>
 
         <!-- KHUNG CHỨA NỘI DUNG Ở GIỮA -->
-        <main class="relative z-20 flex-1 min-h-0 flex items-center justify-center w-full max-w-7xl mx-auto my-1 sm:my-2">
+        <main class="relative z-30 flex-1 min-h-0 flex items-center justify-center w-full max-w-7xl mx-auto my-1 sm:my-2">
             
+            <!-- ========================================================= -->
+            <!-- MÀN HÌNH 0: MENU CHÍNH (THEO PHONG CÁCH BÀN GỖ/CLASSIC) -->
+            <!-- ========================================================= -->
+            <div id="main-menu-screen" class="w-full h-full flex flex-col items-center justify-center animate__animated animate__fadeIn relative z-30">
+                <div class="text-center mb-10 sm:mb-14">
+                    <!-- Tiêu đề màu Gỗ Khắc sang trọng -->
+                    <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-[100px] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-[#fde68a] via-[#d97706] to-[#78350f] drop-shadow-[0_8px_8px_rgba(0,0,0,0.9)] uppercase mb-4 sm:mb-6 leading-tight sm:leading-none py-2">
+                        Góc Khuất<br/>Bàn Cùng
+                    </h1>
+                    <p class="text-sm sm:text-base md:text-lg lg:text-xl text-[#fef3c7] font-medium max-w-2xl mx-auto px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] opacity-90">
+                        Dự án Visual Novel tương tác <br class="hidden sm:block">giáo dục chuyên sâu về vấn nạn bạo lực học đường.
+                    </p>
+                </div>
+                <!-- Nút bấm màu gỗ đậm viền vàng -->
+                <button onclick="startGame()" class="group relative px-10 sm:px-14 py-4 sm:py-5 bg-gradient-to-b from-[#92400e] to-[#451a03] border-2 border-[#b45309] rounded-2xl font-black text-xl sm:text-2xl lg:text-3xl text-[#fef3c7] shadow-[0_15px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_15px_40px_rgba(217,119,6,0.5)] transform hover:-translate-y-1 transition-all duration-300 overflow-hidden active:scale-95 flex items-center gap-3 sm:gap-4">
+                    <svg class="w-7 h-7 sm:w-8 sm:h-8 fill-current text-[#fcd34d] group-hover:text-white transition-colors" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    <span class="tracking-widest drop-shadow-md">BẮT ĐẦU CHƠI</span>
+                </button>
+            </div>
+
             <!-- MÀN HÌNH 1: CHỌN VAI -->
-            <div id="role-selection-screen" class="w-full h-full max-w-7xl flex flex-col justify-center animate__animated animate__fadeIn">
+            <div id="role-selection-screen" class="hidden w-full h-full max-w-7xl flex-col justify-center animate__animated">
                 <div class="flex-1 min-h-0 flex items-center justify-center relative w-full px-2 sm:px-0">
-                    
                     <button onclick="switchMobileCard(-1)" class="sm:hidden absolute left-2 z-30 bg-slate-800/90 text-white p-2.5 rounded-full border border-slate-600 shadow-[0_0_15px_rgba(0,0,0,0.5)] active:scale-90 transition-all">
                         <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
 
-                    <div class="w-full max-w-[320px] h-[68vh] min-h-[460px] max-h-[540px] sm:max-w-2xl lg:max-w-none sm:h-full sm:min-h-0 sm:max-h-none mx-auto flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 items-stretch justify-center pt-10 sm:pt-16 lg:pt-16 pb-4">
+                    <div class="w-full max-w-[320px] h-[68vh] min-h-[460px] max-h-[540px] sm:max-w-2xl lg:max-w-none sm:h-full sm:min-h-0 sm:max-h-none mx-auto flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 items-stretch justify-center pt-10 sm:pt-16 lg:pt-20 pb-4">
                         
-                        <!-- 1. THẺ MAI -->
                         <div id="card-mai" onclick="startRole('mai')" class="role-card flex flex-1 bg-slate-900/80 border border-slate-700/50 hover:border-emerald-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-all duration-500 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full">
                             <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-emerald-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-emerald-500/40 transition-all duration-700"></div>
                             <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-emerald-950/30 to-transparent border-b border-slate-800 rounded-t-[20px] sm:rounded-t-[28px]">
-                                <!-- Đã sửa lg:h-[110%] để vừa vặn trên màn PC -->
-                                <img src="assets/characters/Char_1.png" alt="Mai" class="absolute bottom-0 h-[115%] sm:h-[120%] lg:h-[110%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)] transform group-hover:scale-105 transition-transform duration-700 z-10">
+                                <img src="assets/characters/Char_1.png" alt="Mai" class="absolute bottom-0 h-[115%] sm:h-[125%] lg:h-[135%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)] transform group-hover:scale-105 transition-transform duration-700 z-10">
                             </div>
                             <div class="p-5 flex flex-col justify-between relative z-20 bg-slate-950 shrink-0 rounded-b-[20px] sm:rounded-b-[28px]">
                                 <div>
@@ -74,11 +89,10 @@
                             </div>
                         </div>
 
-                        <!-- 2. THẺ MINH -->
                         <div id="card-minh" onclick="startRole('minh')" class="role-card hidden sm:flex flex-1 bg-slate-900/80 border border-slate-700/50 hover:border-indigo-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-all duration-500 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full">
                             <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-indigo-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-indigo-500/40 transition-all duration-700"></div>
                             <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-indigo-950/30 to-transparent border-b border-slate-800 rounded-t-[20px] sm:rounded-t-[28px]">
-                                <img src="assets/characters/Char_4.png" alt="Minh" class="absolute bottom-0 h-[115%] sm:h-[120%] lg:h-[110%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)] transform group-hover:scale-105 transition-transform duration-700 z-10">
+                                <img src="assets/characters/Char_4.png" alt="Minh" class="absolute bottom-0 h-[115%] sm:h-[125%] lg:h-[135%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)] transform group-hover:scale-105 transition-transform duration-700 z-10">
                             </div>
                             <div class="p-5 flex flex-col justify-between relative z-20 bg-slate-950 shrink-0 rounded-b-[20px] sm:rounded-b-[28px]">
                                 <div>
@@ -93,11 +107,10 @@
                             </div>
                         </div>
 
-                        <!-- 3. THẺ LINH -->
                         <div id="card-linh" onclick="startRole('linh')" class="role-card hidden sm:flex flex-1 bg-slate-900/80 border border-slate-700/50 hover:border-sky-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-all duration-500 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full">
                             <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-sky-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-sky-500/40 transition-all duration-700"></div>
                             <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-sky-950/30 to-transparent border-b border-slate-800 rounded-t-[20px] sm:rounded-t-[28px]">
-                                <img src="assets/characters/Char_2.png" alt="Linh" class="absolute bottom-0 h-[115%] sm:h-[120%] lg:h-[110%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)] transform group-hover:scale-105 transition-transform duration-700 z-10">
+                                <img src="assets/characters/Char_2.png" alt="Linh" class="absolute bottom-0 h-[115%] sm:h-[125%] lg:h-[135%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)] transform group-hover:scale-105 transition-transform duration-700 z-10">
                             </div>
                             <div class="p-5 flex flex-col justify-between relative z-20 bg-slate-950 shrink-0 rounded-b-[20px] sm:rounded-b-[28px]">
                                 <div>
@@ -112,11 +125,10 @@
                             </div>
                         </div>
 
-                        <!-- 4. THẺ NAM -->
                         <div id="card-nam" onclick="startRole('nam')" class="role-card hidden sm:flex flex-1 bg-slate-900/80 border border-slate-700/50 hover:border-amber-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-all duration-500 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full">
                             <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-amber-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-amber-500/40 transition-all duration-700"></div>
                             <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-amber-950/30 to-transparent border-b border-slate-800 rounded-t-[20px] sm:rounded-t-[28px]">
-                                <img src="assets/characters/Char_3.png" alt="Nam" class="absolute bottom-0 h-[115%] sm:h-[120%] lg:h-[110%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)] transform group-hover:scale-105 transition-transform duration-700 z-10">
+                                <img src="assets/characters/Char_3.png" alt="Nam" class="absolute bottom-0 h-[115%] sm:h-[125%] lg:h-[135%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_15px_rgba(0,0,0,0.6)] transform group-hover:scale-105 transition-transform duration-700 z-10">
                             </div>
                             <div class="p-5 flex flex-col justify-between relative z-20 bg-slate-950 shrink-0 rounded-b-[20px] sm:rounded-b-[28px]">
                                 <div>
@@ -136,7 +148,6 @@
                     <button onclick="switchMobileCard(1)" class="sm:hidden absolute right-2 z-30 bg-slate-800/90 text-white p-2.5 rounded-full border border-slate-600 shadow-[0_0_15px_rgba(0,0,0,0.5)] active:scale-90 transition-all">
                         <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                     </button>
-
                 </div>
 
                 <div class="flex sm:hidden items-center justify-center gap-2 mt-4 shrink-0">
@@ -145,17 +156,13 @@
                     <span id="dot-2" class="w-1.5 h-1.5 bg-white/20 rounded-full transition-all duration-300"></span>
                     <span id="dot-3" class="w-1.5 h-1.5 bg-white/20 rounded-full transition-all duration-300"></span>
                 </div>
-
             </div>
 
             <!-- MÀN HÌNH 2: GAMEPLAY -->
-            <div id="gameplay-screen" class="hidden w-full h-full max-h-[720px] shrink-0 flex-col md:flex-row items-stretch transition-all duration-300 min-h-0 overflow-visible relative mt-8 md:mt-0">
-                
+            <div id="gameplay-screen" class="hidden w-full h-full max-h-[720px] shrink-0 flex-col md:flex-row items-stretch transition-all duration-300 min-h-0 overflow-visible relative mt-8 sm:mt-0">
                 <div class="flex-1 min-h-0 w-full md:w-5/12 lg:w-1/2 relative overflow-visible flex items-end justify-center">
                     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-64 md:w-96 md:h-96 bg-white/5 rounded-full blur-3xl pointer-events-none z-0"></div>
-                    <!-- Đã giảm md:h-[110%] và lg:h-[105%] để PC không bị đụng Header -->
-                    <img id="char-sprite-img" src="" alt="Character Sprite" class="absolute bottom-0 z-10 h-[115%] sm:h-[120%] md:h-[110%] lg:h-[105%] w-auto max-w-none object-contain origin-bottom animate__animated drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)] transition-all duration-300">
-                </div>
+                    <img id="char-sprite-img" src="" alt="Character Sprite" class="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 h-[85%] sm:h-[100%] md:h-[110%] lg:h-[105%] w-auto max-w-[80vw] sm:max-w-none object-contain origin-bottom animate__animated drop-shadow-[0_15px_30px_rgba(0,0,0,0.8)] transition-all duration-300">                </div>
 
                 <div id="dialogue-container" class="h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 bg-slate-900/95 border border-slate-800 p-3.5 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-md flex flex-col justify-between min-h-0 shrink-0 z-20">
                     <div id="char-name" class="font-bold text-base sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-800 shrink-0"></div>
@@ -177,48 +184,67 @@
         <footer class="relative z-20 text-center text-[10px] sm:text-xs text-slate-400 font-medium py-1 border-t border-white/5 shrink-0">
             Thiết kế tối ưu cho máy chiếu lớp học & thiết bị di động
         </footer>
-
     </div>
 
     <!-- LỚP PHỦ KẾT QUẢ TOÀN MÀN HÌNH -->
     <div id="result-overlay" class="hidden fixed inset-0 z-[100] w-screen h-screen bg-slate-950/95 backdrop-blur-2xl flex-col justify-between overflow-y-auto custom-scrollbar animate__animated transition-all duration-500 select-none">
-        
         <div id="result-bg-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] rounded-full blur-[140px] pointer-events-none transition-all duration-1000 opacity-25"></div>
-
         <div class="w-full px-6 py-4 flex justify-between items-center relative z-10 border-b border-white/10 bg-black/20 shrink-0">
             <div id="result-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-extrabold uppercase tracking-widest border"></div>
             <span class="text-xs text-slate-400 hidden sm:inline font-medium">Góc Khuất Bàn Cùng • Phân tích hệ quả</span>
         </div>
-
         <div class="flex-1 min-h-0 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center p-4 sm:p-8 md:p-12 gap-8 lg:gap-16 relative z-10 my-auto">
-            
             <div class="w-full lg:w-1/2 h-56 sm:h-80 lg:h-[65vh] max-h-[600px] flex items-center justify-center relative group shrink-0">
                 <div class="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden border border-white/15 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative bg-slate-900/80 flex items-center justify-center">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 pointer-events-none"></div>
                     <img id="result-img" src="" alt="Minh họa hệ quả" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
                 </div>
             </div>
-
             <div class="w-full lg:w-1/2 flex flex-col justify-center text-left max-w-2xl">
                 <h2 id="result-title" class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-lg mb-4 sm:mb-6 animate__animated animate__fadeInUp"></h2>
-                
                 <div class="bg-white/[0.03] p-5 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border border-white/10 backdrop-blur-md mb-6 sm:mb-8 shadow-inner animate__animated animate__fadeInUp animate__delay-1s">
                     <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                         <span>💡 Góc nhìn tâm lý & Bài học</span>
                     </div>
                     <p id="result-desc" class="text-sm sm:text-base md:text-lg lg:text-xl text-slate-100 leading-relaxed font-normal"></p>
                 </div>
-
                 <div id="result-choices-box" class="w-full animate__animated animate__fadeInUp animate__delay-1s"></div>
             </div>
-
         </div>
-
         <div class="w-full py-3 text-center text-[11px] text-slate-500 relative z-10 border-t border-white/5 shrink-0">
             Hãy suy ngẫm về quyết định của bạn và thử lại để tìm ra giải pháp tốt nhất
         </div>
-
     </div>
+
+    <!-- MODAL XÁC NHẬN THOÁT -->
+    <div id="confirm-reset-modal" class="hidden fixed inset-0 z-[150] w-screen h-screen bg-slate-950/80 backdrop-blur-sm flex-col items-center justify-center animate__animated select-none">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-[24px] p-6 sm:p-8 max-w-sm sm:max-w-md w-[90%] shadow-[0_20px_50px_rgba(0,0,0,0.7)] transform transition-all flex flex-col items-center text-center animate__animated animate__zoomIn animate__faster">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mb-4 sm:mb-5 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-black text-white mb-2">Đổi vai trò khác?</h3>
+            <p class="text-sm sm:text-base text-slate-400 mb-6 leading-relaxed">Bạn có chắc chắn muốn quay lại không? Mọi lựa chọn ở câu chuyện hiện tại sẽ bị hủy và bạn phải chơi lại từ đầu.</p>
+            <div class="flex w-full gap-3 sm:gap-4">
+                <button onclick="closeConfirmModal()" class="flex-1 py-3 sm:py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold transition active:scale-95 text-sm sm:text-base">Tiếp tục chơi</button>
+                <button onclick="resetGame()" class="flex-1 py-3 sm:py-3.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition shadow-[0_0_15px_rgba(225,29,72,0.4)] active:scale-95 text-sm sm:text-base">Đồng ý thoát</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NÚT BẬT/TẮT ÂM THANH GÓC PHẢI DƯỚI CÙNG -->
+    <button id="btn-audio-toggle" onclick="toggleAudio()" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[200] bg-slate-900/80 hover:bg-slate-800 text-amber-400 hover:text-amber-200 p-3 sm:p-3.5 rounded-full border border-slate-700 shadow-[0_0_15px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 active:scale-90">
+        <!-- Icon Loa Bật -->
+        <svg id="icon-vol-on" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+        </svg>
+        <!-- Icon Loa Tắt (Mặc định ẩn) -->
+        <svg id="icon-vol-off" class="w-5 h-5 sm:w-6 sm:h-6 hidden text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
+        </svg>
+    </button>
 
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
