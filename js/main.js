@@ -7,17 +7,27 @@ const sndComplete = new Audio('assets/audio/Complete.wav');
 const sndAfterFail = new Audio('assets/audio/AfterFail.wav');
 const sndAfterComplete = new Audio('assets/audio/AfterComplete.wav');
 
-// Nhạc nền (Loop liên tục)
 const sndBGM = new Audio('assets/audio/BackgroundGame.wav');
 sndBGM.loop = true;
-sndBGM.volume = 0.3; // Nhạc nền nên để âm lượng nhỏ (30%) để không lấn át tiếng click
+sndBGM.volume = 0.3; 
 
 let isMuted = false;
+let audioInitialized = false;
 
-// Hàm kích hoạt phát âm thanh đa luồng (tránh bị đè âm khi click nhanh)
+// TỰ ĐỘNG BẬT NHẠC NỀN KHI NGƯỜI DÙNG TƯƠNG TÁC BẤT KỲ ĐÂU (CATCH AUTOPLAY)
+function initGlobalAudio() {
+    if (audioInitialized || isMuted) return;
+    sndBGM.play().then(() => {
+        audioInitialized = true;
+    }).catch(e => {
+        // Trình duyệt chặn auto-play, chờ click tiếp theo
+    });
+}
+document.addEventListener('click', initGlobalAudio, { once: true });
+document.addEventListener('touchstart', initGlobalAudio, { once: true });
+
 function playSound(type) {
     if (isMuted) return;
-    
     let snd;
     if (type === 'button') snd = sndButton.cloneNode();
     else if (type === 'fail') snd = sndFail.cloneNode();
@@ -26,12 +36,11 @@ function playSound(type) {
     else if (type === 'after-complete') snd = sndAfterComplete.cloneNode();
     
     if (snd) {
-        snd.volume = 0.7; // Âm lượng hiệu ứng SFX (70%)
-        snd.play().catch(e => console.log('Auto-play bị chặn bởi trình duyệt:', e));
+        snd.volume = 0.7;
+        snd.play().catch(e => console.log('Chặn Auto-play SFX'));
     }
 }
 
-// Hàm Bật/Tắt âm thanh toàn cục (Cho nút loa ở góc phải dưới)
 function toggleAudio() {
     isMuted = !isMuted;
     const iconOn = document.getElementById('icon-vol-on');
@@ -40,25 +49,60 @@ function toggleAudio() {
     if (isMuted) {
         iconOn.classList.add('hidden');
         iconOff.classList.remove('hidden');
-        sndBGM.pause(); // Tắt nhạc nền
+        sndBGM.pause(); 
     } else {
         iconOn.classList.remove('hidden');
         iconOff.classList.add('hidden');
-        playSound('button'); // Phát tiếng click nhẹ để báo hiệu đã bật
-        sndBGM.play().catch(e => console.log(e)); // Bật lại nhạc nền
+        playSound('button'); 
+        sndBGM.play().catch(e => console.log(e)); 
     }
 }
 
+// ==========================================
+// HIỆU ỨNG HẠT ĐOM ĐÓM (FIREFLIES)
+// ==========================================
+function createFireflies() {
+    const container = document.getElementById('fireflies-container');
+    if (!container) return;
+    for (let i = 0; i < 20; i++) {
+        let firefly = document.createElement('div');
+        firefly.className = 'firefly';
+        let size = Math.random() * 6 + 2; 
+        firefly.style.width = size + 'px';
+        firefly.style.height = size + 'px';
+        firefly.style.left = Math.random() * 100 + '%';
+        firefly.style.top = (Math.random() * 50 + 50) + '%';
+        let duration = Math.random() * 3 + 3;
+        let delay = Math.random() * 2;
+        firefly.style.animation = `float-up ${duration}s ease-in ${delay}s infinite`;
+        container.appendChild(firefly);
+    }
+}
+document.addEventListener("DOMContentLoaded", createFireflies);
+
+// ==========================================
+// HIỆU ỨNG GÕ CHỮ (TYPEWRITER)
+// ==========================================
+let typewriterTimeout = null;
+function typeWriter(element, text, index = 0, speed = 20) {
+    if (index === 0) {
+        element.innerHTML = '';
+    }
+    if (index < text.length) {
+        element.innerHTML += text.charAt(index);
+        typewriterTimeout = setTimeout(() => typeWriter(element, text, index + 1, speed), speed);
+    }
+}
 
 // ==========================================
 // THAM CHIẾU DOM UI
 // ==========================================
 const mainMenuScreen = document.getElementById('main-menu-screen');
 const mainHeader = document.getElementById('main-header');
-
 const roleScreen = document.getElementById('role-selection-screen');
 const gameScreen = document.getElementById('gameplay-screen');
 const container = document.getElementById('game-container');
+const bgOverlay = document.getElementById('bg-overlay');
 const charNameEl = document.getElementById('char-name');
 const storyTextEl = document.getElementById('story-text');
 const choicesBoxEl = document.getElementById('choices-box');
@@ -77,7 +121,6 @@ const resultChoicesBox = document.getElementById('result-choices-box');
 const topNavTitle = document.getElementById('top-nav-title'); 
 const topNavSub = document.getElementById('top-nav-sub');     
 const btnResetRole = document.getElementById('btn-reset-role'); 
-
 const confirmModal = document.getElementById('confirm-reset-modal');
 
 let activeMobileCardIndex = 0; 
@@ -85,37 +128,27 @@ let transitionTimer = null;
 const DEFAULT_BG = "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1932&auto=format&fit=crop";
 
 // ==========================================
-// HÀM KHỞI CHẠY GAME TỪ MENU CHÍNH
+// HÀM KHỞI CHẠY GAME
 // ==========================================
 function startGame() {
     playSound('button'); 
+    initGlobalAudio(); // Bật BGM nếu chưa bật
     
     if (mainMenuScreen) {
         mainMenuScreen.classList.add('hidden');
         mainMenuScreen.classList.remove('flex');
     }
-    
     if (mainHeader) {
         mainHeader.classList.remove('hidden');
         mainHeader.classList.add('flex');
     }
-
     if (roleScreen) {
         roleScreen.classList.remove('hidden');
         roleScreen.classList.add('flex', 'animate__fadeIn');
     }
-    
     updateMobileDots();
-
-    // Bật nhạc nền ngay khi người chơi tương tác lần đầu (Vượt qua chính sách chặn Audio của Trình duyệt)
-    if (!isMuted) {
-        sndBGM.play().catch(e => console.log('Chưa thể phát nhạc nền:', e));
-    }
 }
 
-// ==========================================
-// HÀM HIỂN THỊ VÀ ẨN BẢNG XÁC NHẬN (CONFIRM MODAL)
-// ==========================================
 function showConfirmModal() {
     playSound('button'); 
     if (confirmModal) {
@@ -136,11 +169,9 @@ function closeConfirmModal() {
     }
 }
 
-// ==========================================
-// HÀM KHỞI CHẠY TỪNG NHÂN VẬT
-// ==========================================
 function startRole(role) {
     playSound('button'); 
+    bgOverlay.className = "absolute inset-0 bg-black/60 backdrop-blur-[2px] pointer-events-none transition-all duration-1000";
 
     roleScreen.classList.add('hidden');
     roleScreen.classList.remove('flex');
@@ -176,19 +207,17 @@ function startRole(role) {
     }
 }
 
-// ==========================================
-// HÀM RESET GAME CHÍNH 
-// ==========================================
 function resetGame() {
     closeConfirmModal();
-
     if (transitionTimer) clearTimeout(transitionTimer); 
+    if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
+    bgOverlay.className = "absolute inset-0 bg-black/75 backdrop-blur-[5px] pointer-events-none transition-all duration-1000";
+
     if (resultOverlay) {
         resultOverlay.classList.add('hidden');
         resultOverlay.classList.remove('flex', 'animate__fadeIn');
     }
-
     gameScreen.classList.add('hidden');
     gameScreen.classList.remove('flex', 'animate__fadeIn');
     
@@ -226,11 +255,9 @@ function resetGame() {
     updateMobileDots();
 }
 
-// ==========================================
-// HÀM NẠP KỊCH BẢN & XỬ LÝ CINEMATIC
-// ==========================================
 function loadScene(sceneId) {
     if (transitionTimer) clearTimeout(transitionTimer);
+    if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
     if (resultOverlay) {
         resultOverlay.classList.add('hidden');
@@ -246,7 +273,7 @@ function loadScene(sceneId) {
     if (!data) return;
 
     if (dialogueContainer) {
-        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-3.5 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-md flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 ${data.bgTheme}`;
+        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-md flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 ${data.bgTheme}`;
     }
     
     if (data.bgImage) {
@@ -255,41 +282,48 @@ function loadScene(sceneId) {
 
     if (charSpriteEl && data.charSprite) {
         charSpriteEl.src = data.charSprite;
-        charSpriteEl.classList.remove('animate__pulse');
+        // Bỏ qua animate__pulse lỗi thời, nay đã có char-breathe xịn hơn, chỉ cần nháy nhẹ 1 cái báo chuyển cảnh
+        charSpriteEl.classList.remove('animate__headShake');
         void charSpriteEl.offsetWidth; 
-        charSpriteEl.classList.add('animate__pulse');
+        charSpriteEl.classList.add('animate__headShake');
     }
 
     charNameEl.className = `font-bold text-base sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-800 shrink-0 ${data.charColor}`;
     charNameEl.innerText = data.charName;
 
     if (data.isResult) {
-        storyTextEl.innerText = "Đang quan sát diễn biến và hậu quả...";
+        storyTextEl.innerText = "";
+        typeWriter(storyTextEl, "Đang quan sát diễn biến và hậu quả...", 0, 30);
         choicesBoxEl.innerHTML = ''; 
 
         transitionTimer = setTimeout(() => {
             showResultOverlay(data);
-        }, 1200);
+        }, 1500); // Kéo dài thêm 0.3s để chờ người chơi đọc hết và nghe âm thanh fail/complete
 
         return;
     }
 
-    storyTextEl.innerText = data.story;
+    // Hiệu ứng Typewriter cho cốt truyện
+    storyTextEl.innerText = "";
+    typeWriter(storyTextEl, data.story, 0, 25);
+    
     choicesBoxEl.innerHTML = ''; 
 
-    data.choices.forEach(choice => {
+    data.choices.forEach((choice, index) => {
         const btn = document.createElement('button');
+        // Thêm animate__fadeInUp để các nút nhảy ra theo thứ tự
+        btn.classList.add('animate__animated', 'animate__fadeInUp');
+        btn.style.animationDelay = `${index * 0.15}s`;
+
         if (choice.isUndo) {
-            btn.className = "w-full text-left bg-amber-700/85 hover:bg-amber-600 border border-amber-600/50 text-white font-semibold p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg flex items-center justify-between group shrink-0";
+            btn.className += " w-full text-left bg-amber-700/85 hover:bg-amber-600 border border-amber-600/50 text-white font-semibold p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg flex items-center justify-between group shrink-0";
         } else {
-            btn.className = "w-full text-left bg-slate-800/90 hover:bg-slate-750 border border-slate-700 hover:border-slate-500 text-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg font-medium flex items-center justify-between group leading-normal sm:leading-relaxed shrink-0";
+            btn.className += " w-full text-left bg-slate-800/90 hover:bg-slate-750 border border-slate-700 hover:border-slate-500 text-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg font-medium flex items-center justify-between group leading-normal sm:leading-relaxed shrink-0";
         }
         btn.innerHTML = `<span class="pr-2 sm:pr-4">${choice.text}</span>`;
         
-        // SỰ KIỆN CLICK LỰA CHỌN
         btn.onclick = () => {
             const nextData = STORY_DATA[choice.nextScene];
-            // Kêu Fail/Complete ngay lúc bấm (Trước khi màn hình tối xuống 1.2s)
             if (nextData && nextData.isResult) {
                 let isSuccess = nextData.resultColor && nextData.resultColor.includes('emerald');
                 playSound(isSuccess ? 'complete' : 'fail');
@@ -305,9 +339,6 @@ function loadScene(sceneId) {
     if (choicesScrollBox) choicesScrollBox.scrollTop = 0;
 }
 
-// ==========================================
-// HÀM HIỆN LỚP PHỦ KẾT QUẢ TOÀN MÀN HÌNH
-// ==========================================
 function showResultOverlay(data) {
     if (!resultOverlay) return;
 
@@ -317,22 +348,21 @@ function showResultOverlay(data) {
     let isSuccess = data.resultColor && data.resultColor.includes('emerald');
     let badgeText = isSuccess ? "★ CAN THIỆP THÀNH CÔNG" : "⚠ HẬU QUẢ ĐÁNG TIẾC";
     
-    // Phát âm thanh phân tích (AfterFail hoặc AfterComplete) khi bảng kết quả hiện ra
     playSound(isSuccess ? 'after-complete' : 'after-fail');
 
     if (resultBadge) {
         resultBadge.innerText = badgeText;
         if (isSuccess) {
-            resultBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-extrabold uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.3)]";
+            resultBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-sm font-extrabold uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.3)]";
             if (resultBgGlow) resultBgGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] rounded-full blur-[140px] pointer-events-none transition-all duration-1000 bg-emerald-600/25";
         } else {
-            resultBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs md:text-sm font-extrabold uppercase tracking-widest bg-rose-500/15 text-rose-400 border border-rose-500/40 shadow-[0_0_15px_rgba(244,63,94,0.3)]";
+            resultBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-sm font-extrabold uppercase tracking-widest bg-rose-500/15 text-rose-400 border border-rose-500/40 shadow-[0_0_15px_rgba(244,63,94,0.3)]";
             if (resultBgGlow) resultBgGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] rounded-full blur-[140px] pointer-events-none transition-all duration-1000 bg-rose-600/25";
         }
     }
 
     resultTitle.innerText = data.resultTitle || "KẾT QUẢ";
-    resultTitle.className = `text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-lg mb-4 sm:mb-6 animate__animated animate__fadeInUp ${data.resultColor || 'text-white'}`;
+    resultTitle.className = `text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-lg mb-3 sm:mb-6 animate__animated animate__fadeInUp ${data.resultColor || 'text-white'}`;
     
     if (resultImg) {
         if (data.illustration) {
@@ -343,7 +373,9 @@ function showResultOverlay(data) {
         }
     }
 
-    if (resultDesc) resultDesc.innerText = data.story;
+    // Hiệu ứng Typewriter cho bản dịch kết quả
+    resultDesc.innerText = "";
+    typeWriter(resultDesc, data.story, 0, 15);
     
     resultChoicesBox.innerHTML = '';
     data.choices.forEach(choice => {
@@ -373,12 +405,8 @@ function showResultOverlay(data) {
     resultOverlay.classList.add('flex', 'animate__fadeIn');
 }
 
-// ==========================================
-// ĐIỀU KHIỂN SLIDER TRÊN ĐIỆN THOẠI (4 THẺ)
-// ==========================================
 function switchMobileCard(direction) {
     playSound('button'); 
-    
     activeMobileCardIndex = (activeMobileCardIndex + direction + 4) % 4;
     
     const cards = [
