@@ -1,75 +1,134 @@
 // ==========================================
-// CẤU HÌNH ÂM THANH (AUDIO ENGINE)
+// CẤU HÌNH ÂM THANH (WEB AUDIO API)
+// ------------------------------------------
+// TẠI SAO ĐỔI SANG WEB AUDIO API?
+// - Trước đây mỗi lần playSound() gọi sound.cloneNode() để tạo một thẻ
+//   <audio> MỚI rồi phát. Bản sao mới này CHƯA từng được "mở khoá" nên
+//   trên iOS Safari, trình duyệt chỉ cho phép play() thành công nếu lệnh
+//   đó nằm TRỰC TIẾP bên trong một cử chỉ chạm/click thật của người dùng.
+// - "Complete"/"Fail" được gọi ngay trong sự kiện onclick khi bấm lựa
+//   chọn -> chạy được. Còn "AfterComplete"/"AfterFail" lại được gọi bên
+//   trong showResultOverlay(), vốn được kích hoạt bởi setTimeout (sau
+//   1.5s) trong loadScene() -> lúc này đã RA KHỎI cử chỉ người dùng nên
+//   iOS chặn lại. Đây chính là nguyên nhân bạn gặp lỗi trên iPhone.
+// - Giải pháp đúng: dùng AudioContext của Web Audio API. Chỉ cần
+//   "resume()" AudioContext MỘT LẦN trong cử chỉ đầu tiên của người
+//   dùng (chạm/click bất kỳ), AudioContext sẽ ở trạng thái "running"
+//   CHO ĐẾN HẾT PHIÊN, nên mọi âm thanh phát sau đó — kể cả phát ra từ
+//   setTimeout, Promise, hay bất kỳ đâu — đều hoạt động bình thường
+//   trên mọi thiết bị, kể cả iPhone.
+// - Về hiệu năng: toàn bộ file âm thanh được tải & giải mã (decode)
+//   sẵn thành AudioBuffer MỘT LẦN DUY NHẤT ngay khi trang vừa load.
+//   Mỗi lần phát chỉ tạo một AudioBufferSourceNode rất nhẹ (không phải
+//   load lại file, không phải clone thẻ <audio>), nên không giật/lag
+//   dù bấm liên tục hay chạy trên máy cấu hình thấp.
 // ==========================================
-const sndButton = new Audio('assets/audio/Button.wav');
-const sndFail = new Audio('assets/audio/Fail.wav');
-const sndComplete = new Audio('assets/audio/Complete.wav');
-const sndAfterFail = new Audio('assets/audio/AfterFail.wav');
-const sndAfterComplete = new Audio('assets/audio/AfterComplete.wav');
 
-const sndBGM = new Audio('assets/audio/BackgroundGame.wav');
-sndBGM.loop = true;
-sndBGM.volume = 0.3;
+const AUDIO_SOURCES = {
+    button: 'assets/audio/Button.wav',
+    fail: 'assets/audio/Fail.wav',
+    complete: 'assets/audio/Complete.wav',
+    'after-fail': 'assets/audio/AfterFail.wav',
+    'after-complete': 'assets/audio/AfterComplete.wav',
+    bgm: 'assets/audio/BackgroundGame.wav'
+};
 
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+const audioCtx = AudioContextClass ? new AudioContextClass() : null;
+
+const audioBuffers = {};   // Lưu âm thanh đã giải mã sẵn, phát lại tức thì
 let isMuted = false;
-let audioInitialized = false;
 let audioUnlocked = false;
+let bgmSourceNode = null;
+let bgmGainNode = null;
+let bgmIsPlaying = false;
 
-function unlockAudio() {
-    if (audioUnlocked || isMuted) return;
-
-    const allSounds = [sndButton, sndFail, sndComplete, sndAfterFail, sndAfterComplete, sndBGM];
-    allSounds.forEach(sound => {
-        const temp = sound.cloneNode();
-        temp.muted = true;
-        temp.volume = 0;
-        temp.play().then(() => {
-            temp.pause();
-            temp.currentTime = 0;
-        }).catch(() => {
-            // Safari/iOS may still block if not in a valid gesture,
-            // but this call helps unlock audio for later playback.
-        });
+// Tải & giải mã trước toàn bộ âm thanh ngay khi trang vừa load (không cần
+// đợi tương tác người dùng — decode không bị chặn bởi chính sách autoplay,
+// chỉ có PHÁT (start) mới cần AudioContext ở trạng thái "running").
+function preloadAllAudio() {
+    if (!audioCtx) return;
+    Object.entries(AUDIO_SOURCES).forEach(([key, url]) => {
+        fetch(url)
+            .then(res => res.arrayBuffer())
+            .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
+            .then(decoded => { audioBuffers[key] = decoded; })
+            .catch(err => console.log('Không tải được âm thanh:', url, err));
     });
+}
+document.addEventListener('DOMContentLoaded', preloadAllAudio);
 
+// Mở khoá + khởi động AudioContext ngay trong cử chỉ chạm/click ĐẦU TIÊN
+// của người dùng. Bắt buộc phải làm trong một gesture thật để vượt rào
+// cản autoplay của iOS Safari / Chrome mobile.
+function unlockAudio() {
+    if (!audioCtx || audioUnlocked || isMuted) return;
     audioUnlocked = true;
+
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(startBGM).catch(startBGM);
+    } else {
+        startBGM();
+    }
 }
 
-// TỰ ĐỘNG BẬT NHẠC NỀN KHI NGƯỜI DÙNG CHẠM NHẸ VÀO MÀN HÌNH (VƯỢT RÀO CẢN BROWSER)
 function initGlobalAudio() {
-    if (audioInitialized || isMuted) return;
     unlockAudio();
-    sndBGM.play().then(() => {
-        audioInitialized = true;
-    }).catch(e => {
-        console.log('Chờ tương tác tiếp theo để mở BGM...');
-    });
 }
 // Lắng nghe mọi tương tác để kích hoạt nhạc
 document.addEventListener('click', initGlobalAudio, { once: true });
 document.addEventListener('touchstart', initGlobalAudio, { once: true });
 document.addEventListener('keydown', initGlobalAudio, { once: true });
 
-function playSound(type) {
-    if (isMuted) return;
-    let snd;
-    if (type === 'button') snd = sndButton.cloneNode();
-    else if (type === 'fail') snd = sndFail.cloneNode();
-    else if (type === 'complete') snd = sndComplete.cloneNode();
-    else if (type === 'after-fail') snd = sndAfterFail.cloneNode();
-    else if (type === 'after-complete') snd = sndAfterComplete.cloneNode();
-    
-    if (snd) {
-        snd.volume = 0.7;
-        snd.play().catch(e => {
-            if (!audioUnlocked) {
-                unlockAudio();
-                snd.play().catch(e2 => console.log('Chặn Auto-play SFX lần 2', e2));
-            } else {
-                console.log('Chặn Auto-play SFX', e);
-            }
-        });
+// Một số trình duyệt di động tự "suspend" AudioContext khi rời tab / khoá
+// màn hình / chuyển app. Tự phục hồi khi người dùng quay lại để tránh mất
+// tiếng giữa chừng.
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && audioCtx && audioCtx.state === 'suspended' && !isMuted) {
+        audioCtx.resume().then(() => { if (!bgmIsPlaying) startBGM(); });
     }
+});
+
+function playSound(type) {
+    if (isMuted || !audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const buffer = audioBuffers[type];
+    if (!buffer) return; // File chưa tải kịp (mạng chậm) -> bỏ qua êm ái, không vỡ game
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.7;
+    source.connect(gain).connect(audioCtx.destination);
+    source.start(0);
+}
+
+function startBGM() {
+    if (bgmIsPlaying || isMuted || !audioCtx) return;
+    const buffer = audioBuffers.bgm;
+    if (!buffer) {
+        // Nhạc nền chưa giải mã kịp (thường do mạng chậm) -> thử lại sau một chút
+        setTimeout(() => { if (audioUnlocked && !isMuted) startBGM(); }, 300);
+        return;
+    }
+    bgmSourceNode = audioCtx.createBufferSource();
+    bgmSourceNode.buffer = buffer;
+    bgmSourceNode.loop = true;
+    bgmGainNode = audioCtx.createGain();
+    bgmGainNode.gain.value = 0.3;
+    bgmSourceNode.connect(bgmGainNode).connect(audioCtx.destination);
+    bgmSourceNode.start(0);
+    bgmIsPlaying = true;
+}
+
+function stopBGM() {
+    if (bgmSourceNode) {
+        try { bgmSourceNode.stop(); } catch (e) {}
+        bgmSourceNode.disconnect();
+        bgmSourceNode = null;
+    }
+    bgmIsPlaying = false;
 }
 
 function toggleAudio() {
@@ -80,12 +139,14 @@ function toggleAudio() {
     if (isMuted) {
         iconOn.classList.add('hidden');
         iconOff.classList.remove('hidden');
-        sndBGM.pause(); 
+        stopBGM();
     } else {
         iconOn.classList.remove('hidden');
         iconOff.classList.add('hidden');
-        playSound('button'); 
-        sndBGM.play().catch(e => console.log(e)); 
+        unlockAudio();
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        playSound('button');
+        startBGM();
     }
 }
 
