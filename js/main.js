@@ -9,14 +9,36 @@ const sndAfterComplete = new Audio('assets/audio/AfterComplete.wav');
 
 const sndBGM = new Audio('assets/audio/BackgroundGame.wav');
 sndBGM.loop = true;
-sndBGM.volume = 0.3; 
+sndBGM.volume = 0.3;
 
 let isMuted = false;
 let audioInitialized = false;
+let audioUnlocked = false;
+
+function unlockAudio() {
+    if (audioUnlocked || isMuted) return;
+
+    const allSounds = [sndButton, sndFail, sndComplete, sndAfterFail, sndAfterComplete, sndBGM];
+    allSounds.forEach(sound => {
+        const temp = sound.cloneNode();
+        temp.muted = true;
+        temp.volume = 0;
+        temp.play().then(() => {
+            temp.pause();
+            temp.currentTime = 0;
+        }).catch(() => {
+            // Safari/iOS may still block if not in a valid gesture,
+            // but this call helps unlock audio for later playback.
+        });
+    });
+
+    audioUnlocked = true;
+}
 
 // TỰ ĐỘNG BẬT NHẠC NỀN KHI NGƯỜI DÙNG CHẠM NHẸ VÀO MÀN HÌNH (VƯỢT RÀO CẢN BROWSER)
 function initGlobalAudio() {
     if (audioInitialized || isMuted) return;
+    unlockAudio();
     sndBGM.play().then(() => {
         audioInitialized = true;
     }).catch(e => {
@@ -39,7 +61,14 @@ function playSound(type) {
     
     if (snd) {
         snd.volume = 0.7;
-        snd.play().catch(e => console.log('Chặn Auto-play SFX'));
+        snd.play().catch(e => {
+            if (!audioUnlocked) {
+                unlockAudio();
+                snd.play().catch(e2 => console.log('Chặn Auto-play SFX lần 2', e2));
+            } else {
+                console.log('Chặn Auto-play SFX', e);
+            }
+        });
     }
 }
 
