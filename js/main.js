@@ -83,16 +83,14 @@ function createFireflies() {
 document.addEventListener("DOMContentLoaded", createFireflies);
 
 // ==========================================
-// HIỆU ỨNG GÕ CHỮ (TYPEWRITER - TỐI ƯU FPS)
-// Dùng textNode thay vì innerHTML để chống giật màn hình
+// HIỆU ỨNG GÕ CHỮ (TYPEWRITER - TỐI ƯU FPS CHO DI ĐỘNG)
 // ==========================================
 let typewriterTimeout = null;
 function typeWriter(element, text, index = 0, speed = 15) {
     if (index === 0) {
-        element.textContent = ''; // Xóa sạch một cách nhẹ nhàng nhất
+        element.textContent = ''; 
     }
     if (index < text.length) {
-        // Nạp từng ký tự thô để không bắt CPU phải tính toán lại CSS
         element.appendChild(document.createTextNode(text.charAt(index)));
         typewriterTimeout = setTimeout(() => typeWriter(element, text, index + 1, speed), speed);
     }
@@ -175,6 +173,7 @@ function closeConfirmModal() {
 
 function startRole(role) {
     playSound('button'); 
+    // Đã thay đổi: Khi vào gameplay, bật lớp phủ nền đen 80% an toàn
     bgOverlay.className = "absolute inset-0 bg-black/80 pointer-events-none transition-colors duration-1000";
 
     roleScreen.classList.add('hidden');
@@ -216,7 +215,8 @@ function resetGame() {
     if (transitionTimer) clearTimeout(transitionTimer); 
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
-    bgOverlay.className = "absolute inset-0 bg-black/85 pointer-events-none transition-colors duration-1000";
+    // Trở về nền đen 70% cho màn hình Chọn Nhân Vật
+    bgOverlay.className = "absolute inset-0 bg-black/70 backdrop-blur-[2px] pointer-events-none transition-colors duration-1000";
 
     if (resultOverlay) {
         resultOverlay.classList.add('hidden');
@@ -243,18 +243,6 @@ function resetGame() {
 
     gameScreen.className = "hidden w-full h-full max-h-[720px] shrink-0 flex-col md:flex-row items-stretch transition-opacity duration-300 min-h-0 overflow-visible relative mt-8 sm:mt-0";
 
-    const cardMai = document.getElementById('card-mai');
-    const cardMinh = document.getElementById('card-minh');
-    const cardLinh = document.getElementById('card-linh');
-    const cardNam = document.getElementById('card-nam');
-
-    if (cardMai && cardMinh && cardLinh && cardNam) {
-        cardMai.className = "role-card flex flex-1 bg-slate-900/90 border border-slate-700/50 hover:border-emerald-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu";
-        cardMinh.className = "role-card hidden sm:flex flex-1 bg-slate-900/90 border border-slate-700/50 hover:border-indigo-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu";
-        cardLinh.className = "role-card hidden sm:flex flex-1 bg-slate-900/90 border border-slate-700/50 hover:border-sky-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu";
-        cardNam.className = "role-card hidden sm:flex flex-1 bg-slate-900/90 border border-slate-700/50 hover:border-amber-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu";
-    }
-
     activeMobileCardIndex = 0;
     updateMobileDots();
 }
@@ -277,7 +265,7 @@ function loadScene(sceneId) {
     if (!data) return;
 
     if (dialogueContainer) {
-        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.7)] flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 ${data.bgTheme}`;
+        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/90 backdrop-blur-xl flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 ${data.bgTheme}`;
     }
     
     if (data.bgImage) {
@@ -291,7 +279,7 @@ function loadScene(sceneId) {
         charSpriteEl.classList.add('animate__headShake');
     }
 
-    charNameEl.className = `font-bold text-base sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-800 shrink-0 ${data.charColor}`;
+    charNameEl.className = `font-black text-lg sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md ${data.charColor}`;
     charNameEl.innerText = data.charName;
 
     if (data.isResult) {
@@ -314,14 +302,14 @@ function loadScene(sceneId) {
     data.choices.forEach((choice, index) => {
         const btn = document.createElement('button');
         btn.classList.add('animate__animated', 'animate__fadeInUp');
-        btn.style.animationDelay = `${index * 0.12}s`; // Các nút hiện ra mượt mà theo thứ tự
+        btn.style.animationDelay = `${index * 0.12}s`; 
 
         if (choice.isUndo) {
-            btn.className += " w-full text-left bg-amber-700/85 hover:bg-amber-600 border border-amber-600/50 text-white font-semibold p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg flex items-center justify-between group shrink-0 transform-gpu";
+            btn.className += " w-full text-left bg-amber-700/90 hover:bg-amber-600 border border-amber-600/50 text-white font-semibold p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow active:scale-[0.99] text-[13px] sm:text-base md:text-lg flex items-center justify-between group shrink-0 transform-gpu";
         } else {
-            btn.className += " w-full text-left bg-slate-800/90 hover:bg-slate-750 border border-slate-700 hover:border-slate-500 text-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg font-medium flex items-center justify-between group leading-normal sm:leading-relaxed shrink-0 transform-gpu";
+            btn.className += " w-full text-left bg-slate-800/90 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow active:scale-[0.99] text-[13px] sm:text-base md:text-lg font-medium flex items-center justify-between group leading-normal sm:leading-relaxed shrink-0 transform-gpu";
         }
-        btn.innerHTML = `<span class="pr-2 sm:pr-4">${choice.text}</span>`;
+        btn.innerHTML = `<span class="pr-2 sm:pr-4 drop-shadow-md">${choice.text}</span>`;
         
         btn.onclick = () => {
             const nextData = STORY_DATA[choice.nextScene];
@@ -363,7 +351,7 @@ function showResultOverlay(data) {
     }
 
     resultTitle.innerText = data.resultTitle || "KẾT QUẢ";
-    resultTitle.className = `text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-lg mb-3 sm:mb-6 animate__animated animate__fadeInUp ${data.resultColor || 'text-white'}`;
+    resultTitle.className = `text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.9)] mb-3 sm:mb-6 animate__animated animate__fadeInUp ${data.resultColor || 'text-white'}`;
     
     if (resultImg) {
         if (data.illustration) {
@@ -384,12 +372,12 @@ function showResultOverlay(data) {
             btn.className = "w-full text-center bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-4 sm:p-5 rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(245,158,11,0.3)] active:scale-[0.98] text-base sm:text-lg md:text-xl flex items-center justify-center gap-3 group border border-yellow-400/30 transform-gpu";
             btn.innerHTML = `
                 <svg class="w-6 h-6 transform group-hover:-rotate-45 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-                <span>${choice.text}</span>
+                <span class="drop-shadow-sm">${choice.text}</span>
             `;
         } else {
             btn.className = "w-full text-center bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black p-4 sm:p-5 rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(16,185,129,0.3)] active:scale-[0.98] text-base sm:text-lg md:text-xl flex items-center justify-center gap-3 group border border-emerald-400/30 transform-gpu";
             btn.innerHTML = `
-                <span>${choice.text}</span>
+                <span class="drop-shadow-sm">${choice.text}</span>
                 <svg class="w-6 h-6 transform group-hover:translate-x-2 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             `;
         }
