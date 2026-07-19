@@ -14,17 +14,19 @@ sndBGM.volume = 0.3;
 let isMuted = false;
 let audioInitialized = false;
 
-// TỰ ĐỘNG BẬT NHẠC NỀN KHI NGƯỜI DÙNG TƯƠNG TÁC BẤT KỲ ĐÂU (CATCH AUTOPLAY)
+// TỰ ĐỘNG BẬT NHẠC NỀN KHI NGƯỜI DÙNG CHẠM NHẸ VÀO MÀN HÌNH (VƯỢT RÀO CẢN BROWSER)
 function initGlobalAudio() {
     if (audioInitialized || isMuted) return;
     sndBGM.play().then(() => {
         audioInitialized = true;
     }).catch(e => {
-        // Trình duyệt chặn auto-play, chờ click tiếp theo
+        console.log('Chờ tương tác tiếp theo để mở BGM...');
     });
 }
+// Lắng nghe mọi tương tác để kích hoạt nhạc
 document.addEventListener('click', initGlobalAudio, { once: true });
 document.addEventListener('touchstart', initGlobalAudio, { once: true });
+document.addEventListener('keydown', initGlobalAudio, { once: true });
 
 function playSound(type) {
     if (isMuted) return;
@@ -81,15 +83,17 @@ function createFireflies() {
 document.addEventListener("DOMContentLoaded", createFireflies);
 
 // ==========================================
-// HIỆU ỨNG GÕ CHỮ (TYPEWRITER)
+// HIỆU ỨNG GÕ CHỮ (TYPEWRITER - TỐI ƯU FPS)
+// Dùng textNode thay vì innerHTML để chống giật màn hình
 // ==========================================
 let typewriterTimeout = null;
-function typeWriter(element, text, index = 0, speed = 20) {
+function typeWriter(element, text, index = 0, speed = 15) {
     if (index === 0) {
-        element.innerHTML = '';
+        element.textContent = ''; // Xóa sạch một cách nhẹ nhàng nhất
     }
     if (index < text.length) {
-        element.innerHTML += text.charAt(index);
+        // Nạp từng ký tự thô để không bắt CPU phải tính toán lại CSS
+        element.appendChild(document.createTextNode(text.charAt(index)));
         typewriterTimeout = setTimeout(() => typeWriter(element, text, index + 1, speed), speed);
     }
 }
@@ -132,7 +136,7 @@ const DEFAULT_BG = "https://images.unsplash.com/photo-1580582932707-520aed937b7b
 // ==========================================
 function startGame() {
     playSound('button'); 
-    initGlobalAudio(); // Bật BGM nếu chưa bật
+    initGlobalAudio(); 
     
     if (mainMenuScreen) {
         mainMenuScreen.classList.add('hidden');
@@ -171,7 +175,7 @@ function closeConfirmModal() {
 
 function startRole(role) {
     playSound('button'); 
-    bgOverlay.className = "absolute inset-0 bg-black/60 backdrop-blur-[2px] pointer-events-none transition-all duration-1000";
+    bgOverlay.className = "absolute inset-0 bg-black/80 pointer-events-none transition-colors duration-1000";
 
     roleScreen.classList.add('hidden');
     roleScreen.classList.remove('flex');
@@ -186,22 +190,22 @@ function startRole(role) {
 
     if (role === 'mai') {
         topNavTitle.innerText = "ĐANG ĐÓNG VAI: MAI";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-emerald-400 uppercase truncate drop-shadow-md transition-all duration-300";
+        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-emerald-400 uppercase truncate drop-shadow-md transition-colors duration-300";
         topNavSub.innerText = "Góc nhìn: Nạn nhân nữ chịu đựng & phản kháng";
         loadScene('mai_man_1');
     } else if (role === 'minh') {
         topNavTitle.innerText = "ĐANG ĐÓNG VAI: MINH";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-indigo-400 uppercase truncate drop-shadow-md transition-all duration-300";
+        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-indigo-400 uppercase truncate drop-shadow-md transition-colors duration-300";
         topNavSub.innerText = "Góc nhìn: Nạn nhân nam chịu đựng & phản kháng";
         loadScene('minh_man_1');
     } else if (role === 'linh') {
         topNavTitle.innerText = "ĐANG ĐÓNG VAI: LINH";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-sky-400 uppercase truncate drop-shadow-md transition-all duration-300";
+        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-sky-400 uppercase truncate drop-shadow-md transition-colors duration-300";
         topNavSub.innerText = "Góc nhìn: Người chứng kiến nữ & tâm lý";
         loadScene('linh_man_1');
     } else if (role === 'nam') {
         topNavTitle.innerText = "ĐANG ĐÓNG VAI: NAM";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-amber-400 uppercase truncate drop-shadow-md transition-all duration-300";
+        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-amber-400 uppercase truncate drop-shadow-md transition-colors duration-300";
         topNavSub.innerText = "Góc nhìn: Người chứng kiến nam & can thiệp";
         loadScene('nam_man_1');
     }
@@ -212,7 +216,7 @@ function resetGame() {
     if (transitionTimer) clearTimeout(transitionTimer); 
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
-    bgOverlay.className = "absolute inset-0 bg-black/75 backdrop-blur-[5px] pointer-events-none transition-all duration-1000";
+    bgOverlay.className = "absolute inset-0 bg-black/85 pointer-events-none transition-colors duration-1000";
 
     if (resultOverlay) {
         resultOverlay.classList.add('hidden');
@@ -233,11 +237,11 @@ function resetGame() {
 
     if (topNavTitle && topNavSub) {
         topNavTitle.innerText = "CHỌN NHÂN VẬT";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-all duration-300";
+        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-colors duration-300";
         topNavSub.innerText = "Giáo dục về vấn nạn bạo lực học đường";
     }
 
-    gameScreen.className = "hidden w-full h-full max-h-[720px] shrink-0 flex-col md:flex-row items-stretch transition-all duration-300 min-h-0 overflow-visible relative mt-8 sm:mt-0";
+    gameScreen.className = "hidden w-full h-full max-h-[720px] shrink-0 flex-col md:flex-row items-stretch transition-opacity duration-300 min-h-0 overflow-visible relative mt-8 sm:mt-0";
 
     const cardMai = document.getElementById('card-mai');
     const cardMinh = document.getElementById('card-minh');
@@ -245,10 +249,10 @@ function resetGame() {
     const cardNam = document.getElementById('card-nam');
 
     if (cardMai && cardMinh && cardLinh && cardNam) {
-        cardMai.className = "role-card flex flex-1 bg-slate-900/80 border border-slate-700/50 hover:border-emerald-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-all duration-500 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full";
-        cardMinh.className = "role-card hidden sm:flex flex-1 bg-slate-900/80 border border-slate-700/50 hover:border-indigo-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-all duration-500 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full";
-        cardLinh.className = "role-card hidden sm:flex flex-1 bg-slate-900/80 border border-slate-700/50 hover:border-sky-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-all duration-500 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full";
-        cardNam.className = "role-card hidden sm:flex flex-1 bg-slate-900/80 border border-slate-700/50 hover:border-amber-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-all duration-500 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full";
+        cardMai.className = "role-card flex flex-1 bg-slate-900/90 border border-slate-700/50 hover:border-emerald-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu";
+        cardMinh.className = "role-card hidden sm:flex flex-1 bg-slate-900/90 border border-slate-700/50 hover:border-indigo-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu";
+        cardLinh.className = "role-card hidden sm:flex flex-1 bg-slate-900/90 border border-slate-700/50 hover:border-sky-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu";
+        cardNam.className = "role-card hidden sm:flex flex-1 bg-slate-900/90 border border-slate-700/50 hover:border-amber-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu";
     }
 
     activeMobileCardIndex = 0;
@@ -273,7 +277,7 @@ function loadScene(sceneId) {
     if (!data) return;
 
     if (dialogueContainer) {
-        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.7)] backdrop-blur-md flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 ${data.bgTheme}`;
+        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.7)] flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 ${data.bgTheme}`;
     }
     
     if (data.bgImage) {
@@ -282,7 +286,6 @@ function loadScene(sceneId) {
 
     if (charSpriteEl && data.charSprite) {
         charSpriteEl.src = data.charSprite;
-        // Bỏ qua animate__pulse lỗi thời, nay đã có char-breathe xịn hơn, chỉ cần nháy nhẹ 1 cái báo chuyển cảnh
         charSpriteEl.classList.remove('animate__headShake');
         void charSpriteEl.offsetWidth; 
         charSpriteEl.classList.add('animate__headShake');
@@ -293,32 +296,30 @@ function loadScene(sceneId) {
 
     if (data.isResult) {
         storyTextEl.innerText = "";
-        typeWriter(storyTextEl, "Đang quan sát diễn biến và hậu quả...", 0, 30);
+        typeWriter(storyTextEl, "Đang quan sát diễn biến và hậu quả...", 0, 20);
         choicesBoxEl.innerHTML = ''; 
 
         transitionTimer = setTimeout(() => {
             showResultOverlay(data);
-        }, 1500); // Kéo dài thêm 0.3s để chờ người chơi đọc hết và nghe âm thanh fail/complete
+        }, 1500); 
 
         return;
     }
 
-    // Hiệu ứng Typewriter cho cốt truyện
     storyTextEl.innerText = "";
-    typeWriter(storyTextEl, data.story, 0, 25);
+    typeWriter(storyTextEl, data.story, 0, 15);
     
     choicesBoxEl.innerHTML = ''; 
 
     data.choices.forEach((choice, index) => {
         const btn = document.createElement('button');
-        // Thêm animate__fadeInUp để các nút nhảy ra theo thứ tự
         btn.classList.add('animate__animated', 'animate__fadeInUp');
-        btn.style.animationDelay = `${index * 0.15}s`;
+        btn.style.animationDelay = `${index * 0.12}s`; // Các nút hiện ra mượt mà theo thứ tự
 
         if (choice.isUndo) {
-            btn.className += " w-full text-left bg-amber-700/85 hover:bg-amber-600 border border-amber-600/50 text-white font-semibold p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg flex items-center justify-between group shrink-0";
+            btn.className += " w-full text-left bg-amber-700/85 hover:bg-amber-600 border border-amber-600/50 text-white font-semibold p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg flex items-center justify-between group shrink-0 transform-gpu";
         } else {
-            btn.className += " w-full text-left bg-slate-800/90 hover:bg-slate-750 border border-slate-700 hover:border-slate-500 text-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg font-medium flex items-center justify-between group leading-normal sm:leading-relaxed shrink-0";
+            btn.className += " w-full text-left bg-slate-800/90 hover:bg-slate-750 border border-slate-700 hover:border-slate-500 text-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow active:scale-[0.99] text-xs sm:text-base md:text-lg font-medium flex items-center justify-between group leading-normal sm:leading-relaxed shrink-0 transform-gpu";
         }
         btn.innerHTML = `<span class="pr-2 sm:pr-4">${choice.text}</span>`;
         
@@ -354,10 +355,10 @@ function showResultOverlay(data) {
         resultBadge.innerText = badgeText;
         if (isSuccess) {
             resultBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-sm font-extrabold uppercase tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.3)]";
-            if (resultBgGlow) resultBgGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] rounded-full blur-[140px] pointer-events-none transition-all duration-1000 bg-emerald-600/25";
+            if (resultBgGlow) resultBgGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] rounded-full blur-[140px] pointer-events-none transition-colors duration-1000 bg-emerald-600/25";
         } else {
             resultBadge.className = "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-sm font-extrabold uppercase tracking-widest bg-rose-500/15 text-rose-400 border border-rose-500/40 shadow-[0_0_15px_rgba(244,63,94,0.3)]";
-            if (resultBgGlow) resultBgGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] rounded-full blur-[140px] pointer-events-none transition-all duration-1000 bg-rose-600/25";
+            if (resultBgGlow) resultBgGlow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] rounded-full blur-[140px] pointer-events-none transition-colors duration-1000 bg-rose-600/25";
         }
     }
 
@@ -373,7 +374,6 @@ function showResultOverlay(data) {
         }
     }
 
-    // Hiệu ứng Typewriter cho bản dịch kết quả
     resultDesc.innerText = "";
     typeWriter(resultDesc, data.story, 0, 15);
     
@@ -381,13 +381,13 @@ function showResultOverlay(data) {
     data.choices.forEach(choice => {
         const btn = document.createElement('button');
         if (choice.isUndo) {
-            btn.className = "w-full text-center bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-4 sm:p-5 rounded-2xl transition-all duration-200 shadow-[0_10px_25px_rgba(245,158,11,0.3)] hover:shadow-[0_15px_30px_rgba(245,158,11,0.5)] active:scale-[0.98] text-base sm:text-lg md:text-xl flex items-center justify-center gap-3 group border border-yellow-400/30";
+            btn.className = "w-full text-center bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-4 sm:p-5 rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(245,158,11,0.3)] active:scale-[0.98] text-base sm:text-lg md:text-xl flex items-center justify-center gap-3 group border border-yellow-400/30 transform-gpu";
             btn.innerHTML = `
                 <svg class="w-6 h-6 transform group-hover:-rotate-45 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                 <span>${choice.text}</span>
             `;
         } else {
-            btn.className = "w-full text-center bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black p-4 sm:p-5 rounded-2xl transition-all duration-200 shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_30px_rgba(16,185,129,0.5)] active:scale-[0.98] text-base sm:text-lg md:text-xl flex items-center justify-center gap-3 group border border-emerald-400/30";
+            btn.className = "w-full text-center bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black p-4 sm:p-5 rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(16,185,129,0.3)] active:scale-[0.98] text-base sm:text-lg md:text-xl flex items-center justify-center gap-3 group border border-emerald-400/30 transform-gpu";
             btn.innerHTML = `
                 <span>${choice.text}</span>
                 <svg class="w-6 h-6 transform group-hover:translate-x-2 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -442,9 +442,9 @@ function updateMobileDots() {
         const dot = document.getElementById(`dot-${i}`);
         if (!dot) continue;
         if (i === activeMobileCardIndex) {
-            dot.className = `w-6 h-1.5 ${colors[i]} rounded-full transition-all duration-300`;
+            dot.className = `w-6 h-1.5 ${colors[i]} rounded-full transition-colors duration-300`;
         } else {
-            dot.className = "w-1.5 h-1.5 bg-white/20 rounded-full transition-all duration-300";
+            dot.className = "w-1.5 h-1.5 bg-white/20 rounded-full transition-colors duration-300";
         }
     }
 }
