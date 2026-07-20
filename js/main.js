@@ -140,16 +140,19 @@ function createFireflies() {
 document.addEventListener("DOMContentLoaded", createFireflies);
 
 // ==========================================
-// HIỆU ỨNG GÕ CHỮ (TYPEWRITER - TỐI ƯU FPS)
+// HIỆU ỨNG GÕ CHỮ CÓ CON TRỎ (TYPEWRITER)
 // ==========================================
 let typewriterTimeout = null;
 function typeWriter(element, text, index = 0, speed = 15) {
     if (index === 0) {
         element.textContent = ''; 
+        element.classList.add('typing-cursor');
     }
     if (index < text.length) {
         element.appendChild(document.createTextNode(text.charAt(index)));
         typewriterTimeout = setTimeout(() => typeWriter(element, text, index + 1, speed), speed);
+    } else {
+        element.classList.remove('typing-cursor');
     }
 }
 
@@ -160,7 +163,7 @@ const mainMenuScreen = document.getElementById('main-menu-screen');
 const mainHeader = document.getElementById('main-header');
 const roleScreen = document.getElementById('role-selection-screen');
 const gameScreen = document.getElementById('gameplay-screen');
-const container = document.getElementById('game-container');
+const container = document.getElementById('game-bg'); 
 const bgOverlay = document.getElementById('bg-overlay');
 const charNameEl = document.getElementById('char-name');
 const storyTextEl = document.getElementById('story-text');
@@ -181,6 +184,7 @@ const topNavTitle = document.getElementById('top-nav-title');
 const topNavSub = document.getElementById('top-nav-sub');     
 const btnResetRole = document.getElementById('btn-reset-role'); 
 const confirmModal = document.getElementById('confirm-reset-modal');
+const cinematicFlash = document.getElementById('cinematic-flash');
 
 let activeMobileCardIndex = 0; 
 let transitionTimer = null; 
@@ -230,7 +234,8 @@ function closeConfirmModal() {
 
 function startRole(role) {
     playSound('button'); 
-    bgOverlay.className = "absolute inset-0 bg-black/80 pointer-events-none transition-colors duration-1000";
+    // FIXED: Giữ nguyên cơ chế Fixed Overlay khóa chặt màn hình
+    bgOverlay.className = "fixed inset-0 bg-black/80 pointer-events-none transition-colors duration-1000 z-10";
 
     roleScreen.classList.add('hidden');
     roleScreen.classList.remove('flex');
@@ -271,7 +276,8 @@ function resetGame() {
     if (transitionTimer) clearTimeout(transitionTimer); 
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
-    bgOverlay.className = "absolute inset-0 bg-black/70 backdrop-blur-[2px] pointer-events-none transition-colors duration-1000";
+    // FIXED: Giữ nguyên cơ chế Fixed Overlay khóa chặt màn hình
+    bgOverlay.className = "fixed inset-0 bg-black/70 backdrop-blur-[2px] pointer-events-none transition-colors duration-1000 z-10";
 
     if (resultOverlay) {
         resultOverlay.classList.add('hidden');
@@ -323,7 +329,7 @@ function loadScene(sceneId) {
     if (!data) return;
 
     if (dialogueContainer) {
-        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/90 backdrop-blur-xl flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 ${data.bgTheme}`;
+        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/90 backdrop-blur-xl flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 glass-glow ${data.bgTheme}`;
     }
     
     if (data.bgImage) {
@@ -342,6 +348,7 @@ function loadScene(sceneId) {
 
     if (data.isResult) {
         storyTextEl.innerText = "";
+        storyTextEl.classList.remove('typing-cursor');
         typeWriter(storyTextEl, "Đang quan sát diễn biến và hậu quả...", 0, 20);
         choicesBoxEl.innerHTML = ''; 
 
@@ -357,7 +364,6 @@ function loadScene(sceneId) {
     
     choicesBoxEl.innerHTML = ''; 
 
-    // --- THUẬT TOÁN XÁO TRỘN ĐÁP ÁN (SHUFFLE) ---
     let normalChoices = [];
     let specialChoices = [];
     
@@ -375,7 +381,6 @@ function loadScene(sceneId) {
     }
 
     const finalChoices = [...normalChoices, ...specialChoices];
-    // ----------------------------------------------
 
     finalChoices.forEach((choice, index) => {
         const btn = document.createElement('button');
@@ -390,11 +395,14 @@ function loadScene(sceneId) {
         btn.innerHTML = `<span class="pr-2 sm:pr-4 drop-shadow-md relative z-10">${choice.text}</span>`;
         
         btn.onclick = (e) => {
-            // 1. Khóa click đúp
             const allBtns = choicesBoxEl.querySelectorAll('button');
             allBtns.forEach(b => b.style.pointerEvents = 'none');
 
-            // 2. Hiệu ứng gợn sóng (Ripple) trên nút
+            if (cinematicFlash) {
+                cinematicFlash.style.opacity = '0.15';
+                setTimeout(() => { cinematicFlash.style.opacity = '0'; }, 200);
+            }
+
             const rect = btn.getBoundingClientRect();
             const x = e.clientX ? e.clientX - rect.left : rect.width / 2;
             const y = e.clientY ? e.clientY - rect.top : rect.height / 2;
@@ -405,9 +413,6 @@ function loadScene(sceneId) {
             btn.appendChild(ripple);
             btn.classList.add('btn-selected');
 
-            // ==========================================
-            // 3. HIỆU ỨNG TƯƠNG TÁC LÊN NHÂN VẬT & ÂM THANH
-            // ==========================================
             const nextData = STORY_DATA[choice.nextScene];
             
             charSpriteEl.classList.remove('animate__headShake', 'anim-char-progress', 'anim-char-fail', 'anim-char-success');
@@ -432,7 +437,6 @@ function loadScene(sceneId) {
                 charSpriteEl.classList.add('anim-char-progress');    
             }
 
-            // 4. CHUYỂN CẢNH SAU KHI XEM XONG HIỆU ỨNG (Delay 350ms)
             setTimeout(() => {
                 loadScene(choice.nextScene);
             }, 350); 
@@ -470,9 +474,6 @@ function showResultOverlay(data) {
     resultTitle.innerText = data.resultTitle || "KẾT QUẢ";
     resultTitle.className = `text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.9)] mb-3 sm:mb-6 animate__animated animate__fadeInUp ${data.resultColor || 'text-white'}`;
     
-    // ==========================================
-    // THUẬT TOÁN RANDOM HÌNH ẢNH (CHẴN ĐÚNG - LẺ SAI)
-    // ==========================================
     if (resultImg) {
         let charId = 1; 
         let charNameStr = data.charName ? data.charName.toUpperCase() : "";
@@ -481,15 +482,14 @@ function showResultOverlay(data) {
         else if (charNameStr.includes("MINH")) charId = 4;
 
         let randomBase = Math.floor(Math.random() * 7) + 1; 
-
         let imageNumber = isSuccess ? (randomBase * 2) : (randomBase * 2 - 1);
 
         resultImg.src = `assets/scenes/Char_${charId}_Scene_${imageNumber}.webp`;
         resultImg.parentElement.style.display = 'flex';
     }
-    // ==========================================
 
     resultDesc.innerText = "";
+    storyTextEl.classList.remove('typing-cursor');
     typeWriter(resultDesc, data.story, 0, 15);
     
     resultChoicesBox.innerHTML = '';

@@ -7,11 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
+        /* Tùy chỉnh thanh cuộn thanh lịch */
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
         
+        /* Hiệu ứng Đom đóm */
         @keyframes float-up {
             0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0; }
             20% { opacity: 0.8; }
@@ -38,10 +40,10 @@
             will-change: transform;
         }
 
-        /* BÓNG ĐỔ GIẢ 3D BÊN DƯỚI CHÂN (Chống lag tuyệt đối) */
+        /* Bóng 3D dưới chân thu phóng theo nhịp thở */
         @keyframes shadow-breathe {
             0% { transform: translate3d(-50%, 0, 0) scale(1); opacity: 0.8; }
-            50% { transform: translate3d(-50%, 0, 0) scale(0.75); opacity: 0.3; } /* Khi người bay lên, bóng nhỏ và mờ đi */
+            50% { transform: translate3d(-50%, 0, 0) scale(0.75); opacity: 0.3; }
             100% { transform: translate3d(-50%, 0, 0) scale(1); opacity: 0.8; }
         }
         .char-shadow {
@@ -49,7 +51,7 @@
             will-change: transform, opacity;
         }
 
-        /* HIỆU ỨNG RIPPLE KHI BẤM CHỌN (Tối ưu GPU 100% không lag) */
+        /* Hiệu ứng Ripple Nút Bấm */
         .ripple {
             position: absolute;
             border-radius: 50%;
@@ -66,7 +68,6 @@
         @keyframes ripple-anim {
             100% { transform: scale(12); opacity: 0; }
         }
-        /* Class chớp sáng nút khi được chọn */
         .btn-selected {
             background-color: rgba(255, 255, 255, 0.15) !important;
             border-color: rgba(255, 255, 255, 0.8) !important;
@@ -74,22 +75,14 @@
             transition: all 0.2s ease-out !important;
         }
 
-        /* ==========================================
-           HIỆU ỨNG TƯƠNG TÁC NHÂN VẬT (HIT REACTION)
-           (Tối ưu 100% bằng GPU, không gây tụt FPS)
-           ========================================== */
-        
-        /* 1. Chọn bình thường -> Giật mình nhẹ */
+        /* Hit Reaction Nhân Vật (Tối ưu GPU) */
         @keyframes char-impact-progress {
             0% { transform: scale(1) translateY(0); filter: brightness(1); }
             40% { transform: scale(1.03) translateY(-8px); filter: brightness(1.15); }
             100% { transform: scale(1) translateY(0); filter: brightness(1); }
         }
-        .anim-char-progress {
-            animation: char-impact-progress 0.35s ease-out !important;
-        }
+        .anim-char-progress { animation: char-impact-progress 0.35s ease-out !important; }
 
-        /* 2. Chọn sai (Dẫn đến kết quả tệ) -> Tối sầm, co rúm và rung lắc */
         @keyframes char-impact-fail {
             0% { transform: translateX(0) scale(1); filter: brightness(1) contrast(1); }
             20% { transform: translateX(-12px) scale(0.96); filter: brightness(0.6) contrast(1.2); }
@@ -98,30 +91,68 @@
             80% { transform: translateX(12px) scale(0.96); filter: brightness(0.6) contrast(1.2); }
             100% { transform: translateX(0) scale(1); filter: brightness(1) contrast(1); }
         }
-        .anim-char-fail {
-            animation: char-impact-fail 0.4s ease-in-out !important;
-        }
+        .anim-char-fail { animation: char-impact-fail 0.4s ease-in-out !important; }
 
-        /* 3. Chọn đúng (Dẫn đến thành công) -> Bật nhảy, bừng sáng */
         @keyframes char-impact-success {
             0% { transform: scale(1) translateY(0); filter: brightness(1); }
             40% { transform: scale(1.06) translateY(-20px); filter: brightness(1.3); }
             100% { transform: scale(1) translateY(0); filter: brightness(1); }
         }
-        .anim-char-success {
-            animation: char-impact-success 0.5s ease-out !important;
+        .anim-char-success { animation: char-impact-success 0.5s ease-out !important; }
+
+        /* Con trỏ gõ chữ nhấp nháy */
+        @keyframes blink-cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .typing-cursor::after {
+            content: ' ▍';
+            color: #fbbf24;
+            animation: blink-cursor 0.8s step-end infinite;
+            text-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
+        }
+
+        /* Background "Thở" - Ambient Breathing */
+        @keyframes bg-breathe {
+            0% { transform: scale(1.0); }
+            100% { transform: scale(1.06); }
+        }
+        .bg-ambient {
+            animation: bg-breathe 25s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        /* Viền Glow rực rỡ cho Khung thoại */
+        .glass-glow {
+            position: relative;
+        }
+        .glass-glow::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 10%; right: 10%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            opacity: 0.5;
+            z-index: 10;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-white font-sans select-none overflow-hidden h-[100dvh] w-screen relative">
+<!-- Đã sửa w-screen thành w-full để chống giãn khung -->
+<body class="bg-black text-white font-sans select-none overflow-hidden h-[100dvh] w-full relative">
 
-    <!-- KHUNG GAME CHÍNH -->
-    <div id="game-container" class="h-full w-full flex flex-col justify-between p-2 sm:p-4 md:p-6 lg:p-8 bg-cover bg-center transition-colors duration-1000 relative" style="background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1932&auto=format&fit=crop');">
-        
-        <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px] pointer-events-none transition-all duration-1000" id="bg-overlay"></div>
+    <!-- LỚP CHỚP SÁNG CHUYỂN CẢNH ĐIỆN ẢNH -->
+    <div id="cinematic-flash" class="fixed inset-0 bg-white z-[200] pointer-events-none opacity-0 transition-opacity duration-200 mix-blend-overlay"></div>
 
+    <!-- KHUNG BACKGROUND CHÍNH (Fixed cứng để không bao giờ bị hở viền) -->
+    <div class="fixed -inset-10 z-0 overflow-hidden bg-black">
+        <div id="game-bg" class="w-full h-full bg-cover bg-center transition-all duration-1000 bg-ambient" style="background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1932&auto=format&fit=crop');"></div>
+    </div>
+    
+    <!-- LỚP MỜ PHỦ ĐEN MÀN HÌNH (Fixed khít tuyệt đối 100%) -->
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-[2px] pointer-events-none transition-all duration-1000 z-10" id="bg-overlay"></div>
+
+    <div class="h-full w-full flex flex-col justify-between p-2 sm:p-4 md:p-6 lg:p-8 relative z-20">
         <!-- HEADER -->
-        <header id="main-header" class="hidden relative z-30 py-2 sm:py-3 px-3 sm:px-0 flex-row justify-between items-center shrink-0 w-full max-w-7xl mx-auto gap-2">
+        <header id="main-header" class="hidden py-2 sm:py-3 px-3 sm:px-0 flex-row justify-between items-center shrink-0 w-full max-w-7xl mx-auto gap-2">
             <div class="flex-1 min-w-0">
                 <h1 id="top-nav-title" class="text-sm sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-colors duration-300">
                     CHỌN NHÂN VẬT
@@ -139,10 +170,10 @@
             </button>
         </header>
 
-        <main class="relative z-30 flex-1 min-h-0 flex items-center justify-center w-full max-w-7xl mx-auto my-1 sm:my-2">
+        <main class="flex-1 min-h-0 flex items-center justify-center w-full max-w-7xl mx-auto my-1 sm:my-2">
             
             <!-- MENU CHÍNH -->
-            <div id="main-menu-screen" class="w-full h-full flex flex-col items-center justify-center animate__animated animate__fadeIn relative z-30 overflow-hidden rounded-3xl">
+            <div id="main-menu-screen" class="w-full h-full flex flex-col items-center justify-center animate__animated animate__fadeIn relative overflow-hidden rounded-3xl">
                 <div id="fireflies-container" class="absolute inset-0 z-0 pointer-events-none"></div>
 
                 <div class="text-center mb-10 sm:mb-14 relative z-10">
@@ -170,6 +201,7 @@
 
                     <div class="w-full max-w-[320px] h-[65vh] min-h-[420px] max-h-[520px] sm:max-w-2xl lg:max-w-none sm:h-full sm:min-h-0 sm:max-h-none mx-auto flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 items-stretch justify-center pt-8 sm:pt-16 lg:pt-16 pb-2">
                         
+                        <!-- Thẻ Mai -->
                         <div id="card-mai" onclick="startRole('mai')" class="role-card flex flex-1 bg-slate-900/95 border border-slate-700/50 hover:border-emerald-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu">
                             <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-emerald-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-emerald-500/40 transition-all duration-700"></div>
                             <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-emerald-950/60 to-transparent border-b border-slate-800 rounded-t-[20px] sm:rounded-t-[28px]">
@@ -188,6 +220,7 @@
                             </div>
                         </div>
 
+                        <!-- Thẻ Minh -->
                         <div id="card-minh" onclick="startRole('minh')" class="role-card hidden sm:flex flex-1 bg-slate-900/95 border border-slate-700/50 hover:border-indigo-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu">
                             <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-indigo-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-indigo-500/40 transition-all duration-700"></div>
                             <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-indigo-950/60 to-transparent border-b border-slate-800 rounded-t-[20px] sm:rounded-t-[28px]">
@@ -206,6 +239,7 @@
                             </div>
                         </div>
 
+                        <!-- Thẻ Linh -->
                         <div id="card-linh" onclick="startRole('linh')" class="role-card hidden sm:flex flex-1 bg-slate-900/95 border border-slate-700/50 hover:border-sky-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu">
                             <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-sky-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-sky-500/40 transition-all duration-700"></div>
                             <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-sky-950/60 to-transparent border-b border-slate-800 rounded-t-[20px] sm:rounded-t-[28px]">
@@ -224,6 +258,7 @@
                             </div>
                         </div>
 
+                        <!-- Thẻ Nam -->
                         <div id="card-nam" onclick="startRole('nam')" class="role-card hidden sm:flex flex-1 bg-slate-900/95 border border-slate-700/50 hover:border-amber-500/60 rounded-[20px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu">
                             <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-amber-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-amber-500/40 transition-all duration-700"></div>
                             <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-amber-950/60 to-transparent border-b border-slate-800 rounded-t-[20px] sm:rounded-t-[28px]">
@@ -249,6 +284,7 @@
                     </button>
                 </div>
 
+                <!-- Chấm nhỏ trên Mobile -->
                 <div class="flex sm:hidden items-center justify-center gap-2 mt-4 shrink-0">
                     <span id="dot-0" class="w-6 h-1.5 bg-emerald-500 rounded-full transition-colors duration-300 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
                     <span id="dot-1" class="w-1.5 h-1.5 bg-white/20 rounded-full transition-colors duration-300"></span>
@@ -266,13 +302,14 @@
                     <!-- BÓNG ĐỔ GIẢ 3D MỚI DƯỚI CHÂN NHÂN VẬT -->
                     <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 sm:w-64 h-8 sm:h-10 bg-black/80 rounded-[100%] blur-md pointer-events-none z-0 char-shadow transform-gpu"></div>
 
-                    <!-- BỌC NHÂN VẬT (Bỏ drop-shadow tĩnh, dùng thẻ div để thở) -->
+                    <!-- BỌC NHÂN VẬT -->
                     <div class="char-breathe absolute bottom-0 z-10 w-full h-full flex justify-center items-end pointer-events-none">
                         <img id="char-sprite-img" src="" alt="Character Sprite" class="h-[105%] sm:h-[120%] md:h-[110%] lg:h-[105%] w-auto max-w-none object-contain origin-bottom animate__animated transform-gpu will-change-transform">
                     </div>
                 </div>
 
-                <div id="dialogue-container" class="h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 bg-slate-900/90 backdrop-blur-xl border border-slate-800 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.9)] flex flex-col justify-between min-h-0 shrink-0 z-20 pointer-events-auto">
+                <!-- HỘP THOẠI -->
+                <div id="dialogue-container" class="h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 bg-slate-900/90 backdrop-blur-xl border border-slate-800 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.9)] flex flex-col justify-between min-h-0 shrink-0 z-20 pointer-events-auto glass-glow">
                     <div id="char-name" class="font-black text-lg sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md"></div>
                     
                     <div id="text-scroll-box" class="flex-1 min-h-0 overflow-y-auto pr-2 my-2 sm:my-3 custom-scrollbar">
@@ -289,7 +326,7 @@
 
         </main>
         
-        <footer class="relative z-20 text-center text-[10px] sm:text-xs text-slate-400 font-medium py-1 sm:py-2 border-t border-white/5 shrink-0 bg-slate-950/50">
+        <footer class="relative z-20 text-center text-[10px] sm:text-xs text-slate-400 font-medium py-1 sm:py-2 border-t border-white/5 shrink-0 bg-black/40 backdrop-blur-sm">
             Thiết kế tối ưu cho máy chiếu lớp học & thiết bị di động
         </footer>
     </div>

@@ -948,7 +948,7 @@ const STORY_DATA = {
         story: "Nghe đến từ 'Công an lấy dấu vân tay', đứa bày mưu bắt đầu run rẩy, lắp bắp: 'Thôi thầy... chắc bạn Mai trót dại, em xin lại máy không truy cứu nữa đâu ạ'.",
         choices: [
             { text: "👉 Đồng ý cho qua chuyện vì cũng sợ rắc rối dính dáng tới Công an.", nextScene: "mai_6_3_sai_a" },
-            { text: "👉 Cười khẩy: 'Sợ rồi à? Biết ngay là tụi mày xạo chó mà'.", nextScene: "mai_6_3_sai_b" },
+            { text: "👉 Cười khẩy: 'Sợ rồi à? Biết ngay là tụi mày xạo mà'.", nextScene: "mai_6_3_sai_b" },
             { text: "👉 Kiên quyết: 'Không được! Việc vu khống ăn cắp là xúc phạm danh dự. Em đồng ý làm lớn chuyện này để chứng minh sự trong sạch'.", nextScene: "mai_6_thanh_cong" }
         ]
     },
@@ -1150,7 +1150,7 @@ const STORY_DATA = {
         resultColor: "text-emerald-400",
         illustration: "assets/scenes/Char_1_Scene_14.webp",
         story: "Lực lượng Công an mặc thường phục đã tóm gọn nhóm bắt nạt ngay lúc chúng nhận bọc tiền giả từ tay Mai. Hành vi ghép ảnh 18+ tống tiền bị khởi tố hình sự. Bạo lực học đường đã bị nhổ tận gốc bằng pháp luật và sự dũng cảm tuyệt vời của bạn!",
-        choices: [{ text: "🏆 Chúc mừng bạn hoàn thành Tuyến MAI - Về Menu", nextScene: "RESET_GAME" }]
+        choices: [{ text: "🏆 Chúc mừng bạn hoàn thành Tuyến MAI", nextScene: "RESET_GAME" }]
     },
 
     // ==========================================
@@ -1168,7 +1168,7 @@ const STORY_DATA = {
         story: "Giờ ra chơi, Minh và các bạn đang ném bóng rổ thì nhóm của Long 'đại ca' khối 12 đi tới. Long giật quả bóng trên tay Minh ném ra xa, hất hàm: 'Sân này giờ của bọn tao. Mấy thằng oắt con biến ra chỗ khác chơi'.",
         choices: [
             { text: "👉 Cay máu lao vào đẩy Long: 'Sân trường chung, anh cậy lớn ức hiếp ai?'.", nextScene: "minh_1_sai_a" },
-            { text: "👉 [Cam chịu] Sợ hãi cúi gầm mặt, bảo bạn bè nhường sân rồi cay đắng bỏ đi.", nextScene: "minh_1_sai_b" },
+            { text: "👉 Sợ hãi cúi gầm mặt, bảo bạn bè nhường sân rồi cay đắng bỏ đi.", nextScene: "minh_1_sai_b" },
             { text: "👉 Dừng chơi, giữ khoảng cách và nói: 'Tụi em đăng ký lịch sân này với Thầy Thể chất rồi'.", nextScene: "minh_1_1" }
         ]
     },
@@ -1370,7 +1370,7 @@ const STORY_DATA = {
         choices: [
             { text: "👉 Lôi cổ áo Huy ngay giữa lớp đòi đấm nhau: 'Mày ngon nói lại xem?'.", nextScene: "minh_2_1_sai_a" },
             { text: "👉 Bỏ chạy ra ngoài hành lang đứng khóc vì quá áp lực.", nextScene: "minh_2_1_sai_b" },
-            { text: "👉 Điềm nhiên ngồi xuống chỗ của mình, lấy sách vở ra học bài coi như không nghe thấy tiếng chó sủa.", nextScene: "minh_2_2" }
+            { text: "👉 Điềm nhiên ngồi xuống chỗ của mình, lấy sách vở ra học bài coi như không nghe thấy tiếng gì.", nextScene: "minh_2_2" }
         ]
     },
     "minh_2_1_sai_a": {
@@ -1858,7 +1858,7 @@ const STORY_DATA = {
         charColor: "text-indigo-400",
         charSprite: "assets/characters/Char_4.webp",
         bgTheme: "border-indigo-500/30 bg-slate-900/95",
-        story: "Thằng Trường (cầm đầu) cười nhếch mép, rút ra tờ 500 đồng nhàu nát vứt xuống đất: 'Bức tranh giẻ rách của mày tao đền 500 đồng là đắt đấy, nhặt lên mà liếm đi con chó'.",
+        story: "Thằng Trường (cầm đầu) cười nhếch mép, rút ra tờ 500 đồng nhàu nát vứt xuống đất: 'Bức tranh giẻ rách của mày tao đền 500 đồng là đắt đấy, nhặt lên mà liếm đi con'.",
         choices: [
             { text: "👉 Đạp tờ tiền đi, nhổ bọt vào mặt Trường.", nextScene: "minh_5_1_sai_a" },
             { text: "👉 Xấu hổ quá, bỏ chạy ra khỏi lớp.", nextScene: "minh_5_1_sai_b" },
@@ -1897,7 +1897,7 @@ const STORY_DATA = {
         bgTheme: "border-indigo-500/30 bg-slate-900/95",
         story: "Sự cứng rắn của Minh làm Trường hơi chùn bước. Hôm sau, Minh mang tệp ảnh và hóa đơn màu vẽ lên nhờ Cô giáo Mỹ thuật (người mà Minh rất tin tưởng) xử lý. Khi Cô gọi Trường lên, nó cãi phăng: 'Em lỡ tay quẹt qua làm rách tí mép thôi, bạn ấy tự xé nát ra để ăn vạ em á cô'.",
         choices: [
-            { text: "👉 Tức giận gào lên: 'Mày là con chó nói láo!'.", nextScene: "minh_5_2_sai_a" },
+            { text: "👉 Tức giận gào lên: 'Mày là con nói láo!'.", nextScene: "minh_5_2_sai_a" },
             { text: "👉 Ức phát khóc, năn nỉ Cô giáo phải tin mình.", nextScene: "minh_5_2_sai_b" },
             { text: "👉 Lạnh lùng nói: 'Cô check vân tay trên tệp giấy vụn xem có vân tay của ai vò nát không. Và check vết mực đỏ từ bức tranh có còn dính trên áo đồng phục của Trường không'.", nextScene: "minh_5_3" }
         ]
@@ -2226,7 +2226,7 @@ const STORY_DATA = {
         story: "Thấy Minh quá tự tin đòi gọi Công an lấy dấu vân tay, Bảo (đứa đi cùng báo cáo) bắt đầu đổ mồ hôi, mặt tái nhợt: 'Thôi thầy... hay là chỉ phạt cảnh cáo nó thôi... gọi Công an làm lớn chuyện trường mình mất thi đua...'.",
         choices: [
             { text: "👉 Đồng ý ngay: 'Dạ vâng, cảnh cáo cũng được ạ, chuyện nhỏ bỏ qua thầy ơi'.", nextScene: "minh_7_2_sai_a" },
-            { text: "👉 Tát Bảo một phát: 'Mày rén rồi à con chó?'.", nextScene: "minh_7_2_sai_b" },
+            { text: "👉 Tát Bảo một phát: 'Mày rén rồi à con ?'.", nextScene: "minh_7_2_sai_b" },
             { text: "👉 Quay sang nhìn chằm chằm Bảo: 'Trường mất thi đua hay Mày sợ bị đi tù vì tội vu khống tàng trữ chất cấm? Thầy cứ gọi Công an, không được chìm xuồng vụ này!'.", nextScene: "minh_7_3" }
         ]
     },
@@ -2301,7 +2301,7 @@ const STORY_DATA = {
         resultColor: "text-emerald-400",
         illustration: "assets/scenes/Char_4_Scene_14.webp",
         story: "Sự bình tĩnh, hiểu biết pháp luật khoa học (dấu vân tay) đã cứu Minh khỏi một âm mưu thâm độc. Công an vào cuộc, Long 'đại ca' và băng nhóm bị tóm gọn tàn dư. Minh trở thành biểu tượng của sự kiên cường và lý trí thép trong trường học!",
-        choices: [{ text: "🏆 Chúc mừng bạn hoàn thành Tuyến MINH - Chuyển sang LINH", nextScene: "linh_man_1" }]
+        choices: [{ text: "🏆 Chúc mừng bạn hoàn thành Tuyến MINH", nextScene: "RESET_GAME" }]
     },
 
     // ==========================================
@@ -2517,7 +2517,7 @@ const STORY_DATA = {
         charColor: "text-sky-400",
         charSprite: "assets/characters/Char_2.webp",
         bgTheme: "border-sky-500/30 bg-slate-900/95",
-        story: "Nhờ Linh nhắc vụ camera, Ngọc bị bắt quả tang và bị đình chỉ 3 ngày. Sáng hôm Ngọc đi học lại, Ngọc chặn Linh ở cầu thang, ánh mắt sắc lẹm: 'Mày khôn lắm con chó. Vụ camera là do mày nhắc bà cô đúng không? Chiều nay tan học mày liệu hồn'.",
+        story: "Nhờ Linh nhắc vụ camera, Ngọc bị bắt quả tang và bị đình chỉ 3 ngày. Sáng hôm Ngọc đi học lại, Ngọc chặn Linh ở cầu thang, ánh mắt sắc lẹm: 'Mày khôn lắm con. Vụ camera là do mày nhắc bà cô đúng không? Chiều nay tan học mày liệu hồn'.",
         choices: [
             { text: "👉 Run rẩy xin lỗi: 'Mình không cố ý đâu, tại cô hỏi ép quá'.", nextScene: "linh_2_1_sai_a" },
             { text: "👉 Gân cổ lên: 'Tao nhắc thì sao? Loại ăn cắp như mày xứng đáng bị đuổi học!'.", nextScene: "linh_2_1_sai_b" },
@@ -2921,7 +2921,7 @@ const STORY_DATA = {
         bgTheme: "border-sky-500/30 bg-slate-900/95",
         story: "Thấy bằng chứng rõ ràng, cả group lớp im lặng. Thư và Ngọc bị quê xệ. Ngọc vội nhắn vào: 'Ơ tao thấy sao tao nói vậy, hiểu lầm xíu thôi làm gì căng, tao có ý xấu đâu'.",
         choices: [
-            { text: "👉 Cười đểu: 'Đúng rồi, hiểu lầm thôi, mày làm chó gì có não mà suy nghĩ'.", nextScene: "linh_4_3_sai_a" },
+            { text: "👉 Cười đểu: 'Đúng rồi, hiểu lầm thôi, mày làm gì có não mà suy nghĩ'.", nextScene: "linh_4_3_sai_a" },
             { text: "👉 Nhượng bộ: 'Ừ thôi hiểu nhầm thì cho qua, rút kinh nghiệm nhé'.", nextScene: "linh_4_3_sai_b" },
             { text: "👉 Nghiêm túc tag Ngọc và Thư: 'Thấy một nửa sự thật chưa chắc là sự thật. Việc tung tin sai lệch bôi nhọ người khác là vi phạm pháp luật. Hai cậu nợ Mai một lời xin lỗi công khai'.", nextScene: "linh_4_thanh_cong" }
         ]
@@ -3452,7 +3452,7 @@ const STORY_DATA = {
         resultColor: "text-emerald-400",
         illustration: "assets/scenes/Char_2_Scene_14.webp",
         story: "Hành vi thuê người Hack hệ thống trường học lập tức bị cảnh sát mạng tóm gọn. Cả đường dây bắt nạt bị tống cổ khỏi trường. Hòm thư ẩn danh trở thành tấm khiên vững chắc nhất cho học sinh yếu thế. Bạn đã thực sự tạo ra một 'Lớp Học Hạnh Phúc'!",
-        choices: [{ text: "🏆 Chúc mừng bạn hoàn thành Tuyến LINH - Chuyển sang NAM", nextScene: "nam_man_1" }]
+        choices: [{ text: "🏆 Chúc mừng bạn hoàn thành Tuyến LINH", nextScene: "RESET_GAME" }]
     },
 
     // ==========================================
@@ -3470,7 +3470,7 @@ const STORY_DATA = {
         story: "Bước vào nhà vệ sinh nam giờ ra chơi, Nam thấy 3 học sinh lớp trên đang khóa trái cửa, dội nước xô vào người một bạn nam lớp dưới và quay clip cười cợt.",
         choices: [
             { text: "👉 Lao thẳng vào chửi bới: 'Đm tụi mày làm cái gì đấy? Thả nó ra ngay!'.", nextScene: "nam_1_sai_a" },
-            { text: "👉 [Cam chịu] Giả vờ đi tiểu tiện bình thường coi như không thấy gì rồi lặng lẽ bước ra ngoài.", nextScene: "nam_1_sai_b" },
+            { text: "👉 Giả vờ đi tiểu tiện bình thường coi như không thấy gì rồi lặng lẽ bước ra ngoài.", nextScene: "nam_1_sai_b" },
             { text: "👉 Quay lại hành lang, đập mạnh vào cửa hô to 'Thầy Giám thị đang đi kiểm tra!' để chúng hoảng loạn dừng tay.", nextScene: "nam_1_1" }
         ]
     },
