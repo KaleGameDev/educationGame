@@ -13,7 +13,6 @@ const AUDIO_SOURCES = {
 
 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 const audioCtx = AudioContextClass ? new AudioContextClass() : null;
-
 const audioBuffers = {};   
 let isMuted = false;
 let audioUnlocked = false;
@@ -21,14 +20,17 @@ let bgmSourceNode = null;
 let bgmGainNode = null;
 let bgmIsPlaying = false;
 
+// Hệ thống lưu game (LocalStorage)
+const SAVE_KEY_PREFIX = 'bao_luc_hoc_duong_save_';
+let currentPlayingRole = '';
+
 function preloadAllAudio() {
     if (!audioCtx) return;
     Object.entries(AUDIO_SOURCES).forEach(([key, url]) => {
-        fetch(url)
-            .then(res => res.arrayBuffer())
+        fetch(url).then(res => res.arrayBuffer())
             .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
             .then(decoded => { audioBuffers[key] = decoded; })
-            .catch(err => console.log('Không tải được âm thanh:', url, err));
+            .catch(err => console.log('Lỗi âm thanh:', url, err));
     });
 }
 document.addEventListener('DOMContentLoaded', preloadAllAudio);
@@ -36,17 +38,10 @@ document.addEventListener('DOMContentLoaded', preloadAllAudio);
 function unlockAudio() {
     if (!audioCtx || audioUnlocked || isMuted) return;
     audioUnlocked = true;
-
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume().then(startBGM).catch(startBGM);
-    } else {
-        startBGM();
-    }
+    if (audioCtx.state === 'suspended') { audioCtx.resume().then(startBGM).catch(startBGM); } 
+    else { startBGM(); }
 }
-
-function initGlobalAudio() {
-    unlockAudio();
-}
+function initGlobalAudio() { unlockAudio(); }
 document.addEventListener('click', initGlobalAudio, { once: true });
 document.addEventListener('touchstart', initGlobalAudio, { once: true });
 document.addEventListener('keydown', initGlobalAudio, { once: true });
@@ -60,10 +55,8 @@ document.addEventListener('visibilitychange', () => {
 function playSound(type) {
     if (isMuted || !audioCtx) return;
     if (audioCtx.state === 'suspended') audioCtx.resume();
-
     const buffer = audioBuffers[type];
     if (!buffer) return; 
-
     const source = audioCtx.createBufferSource();
     source.buffer = buffer;
     const gain = audioCtx.createGain();
@@ -75,10 +68,7 @@ function playSound(type) {
 function startBGM() {
     if (bgmIsPlaying || isMuted || !audioCtx) return;
     const buffer = audioBuffers.bgm;
-    if (!buffer) {
-        setTimeout(() => { if (audioUnlocked && !isMuted) startBGM(); }, 300);
-        return;
-    }
+    if (!buffer) { setTimeout(() => { if (audioUnlocked && !isMuted) startBGM(); }, 300); return; }
     bgmSourceNode = audioCtx.createBufferSource();
     bgmSourceNode.buffer = buffer;
     bgmSourceNode.loop = true;
@@ -102,24 +92,16 @@ function toggleAudio() {
     isMuted = !isMuted;
     const iconOn = document.getElementById('icon-vol-on');
     const iconOff = document.getElementById('icon-vol-off');
-
     if (isMuted) {
-        iconOn.classList.add('hidden');
-        iconOff.classList.remove('hidden');
-        stopBGM();
+        iconOn.classList.add('hidden'); iconOff.classList.remove('hidden'); stopBGM();
     } else {
-        iconOn.classList.remove('hidden');
-        iconOff.classList.add('hidden');
+        iconOn.classList.remove('hidden'); iconOff.classList.add('hidden');
         unlockAudio();
         if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-        playSound('button');
-        startBGM();
+        playSound('button'); startBGM();
     }
 }
 
-// ==========================================
-// HIỆU ỨNG HẠT ĐOM ĐÓM (FIREFLIES)
-// ==========================================
 function createFireflies() {
     const container = document.getElementById('fireflies-container');
     if (!container) return;
@@ -127,23 +109,17 @@ function createFireflies() {
         let firefly = document.createElement('div');
         firefly.className = 'firefly';
         let size = Math.random() * 6 + 2; 
-        firefly.style.width = size + 'px';
-        firefly.style.height = size + 'px';
-        firefly.style.left = Math.random() * 100 + '%';
-        firefly.style.top = (Math.random() * 50 + 50) + '%';
-        let duration = Math.random() * 3 + 3;
-        let delay = Math.random() * 2;
+        firefly.style.width = size + 'px'; firefly.style.height = size + 'px';
+        firefly.style.left = Math.random() * 100 + '%'; firefly.style.top = (Math.random() * 50 + 50) + '%';
+        let duration = Math.random() * 3 + 3; let delay = Math.random() * 2;
         firefly.style.animation = `float-up ${duration}s ease-in ${delay}s infinite`;
         container.appendChild(firefly);
     }
 }
 document.addEventListener("DOMContentLoaded", createFireflies);
 
-// ==========================================
-// HIỆU ỨNG GÕ CHỮ CÓ CON TRỎ (TYPEWRITER)
-// ==========================================
 let typewriterTimeout = null;
-function typeWriter(element, text, index = 0, speed = 15) {
+function typeWriter(element, text, index = 0, speed = 12) {
     if (index === 0) {
         element.textContent = ''; 
         element.classList.add('typing-cursor');
@@ -170,53 +146,36 @@ const storyTextEl = document.getElementById('story-text');
 const choicesBoxEl = document.getElementById('choices-box');
 const charSpriteEl = document.getElementById('char-sprite-img');
 const dialogueContainer = document.getElementById('dialogue-container');
-
 const textScrollBox = document.getElementById('text-scroll-box');
 const choicesScrollBox = document.getElementById('choices-scroll-box');
-
 const resultOverlay = document.getElementById('result-overlay');
 const resultTitle = document.getElementById('result-title');
 const resultImg = document.getElementById('result-img');
 const resultDesc = document.getElementById('result-desc');
 const resultChoicesBox = document.getElementById('result-choices-box');
-
 const topNavTitle = document.getElementById('top-nav-title'); 
 const topNavSub = document.getElementById('top-nav-sub');     
 const btnResetRole = document.getElementById('btn-reset-role'); 
 const confirmModal = document.getElementById('confirm-reset-modal');
+const saveModal = document.getElementById('save-modal');
 const cinematicFlash = document.getElementById('cinematic-flash');
 
 let activeMobileCardIndex = 0; 
 let transitionTimer = null; 
 const DEFAULT_BG = "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1932&auto=format&fit=crop";
 
-// ==========================================
-// HÀM KHỞI CHẠY GAME
-// ==========================================
 function startGame() {
-    playSound('button'); 
-    initGlobalAudio(); 
-    
-    if (mainMenuScreen) {
-        mainMenuScreen.classList.add('hidden');
-        mainMenuScreen.classList.remove('flex');
-    }
-    if (mainHeader) {
-        mainHeader.classList.remove('hidden');
-        mainHeader.classList.add('flex');
-    }
-    if (roleScreen) {
-        roleScreen.classList.remove('hidden');
-        roleScreen.classList.add('flex', 'animate__fadeIn');
-    }
+    playSound('button'); initGlobalAudio(); 
+    if (mainMenuScreen) { mainMenuScreen.classList.add('hidden'); mainMenuScreen.classList.remove('flex'); }
+    if (mainHeader) { mainHeader.classList.remove('hidden'); mainHeader.classList.add('flex'); }
+    if (roleScreen) { roleScreen.classList.remove('hidden'); roleScreen.classList.add('flex', 'animate__fadeIn'); }
     updateMobileDots();
 }
 
 function showConfirmModal() {
     playSound('button'); 
     if (confirmModal) {
-        confirmModal.classList.remove('hidden');
-        confirmModal.classList.add('flex', 'animate__fadeIn');
+        confirmModal.classList.remove('hidden'); confirmModal.classList.add('flex', 'animate__fadeIn');
         const modalContent = confirmModal.querySelector('div');
         modalContent.classList.remove('animate__zoomIn');
         void modalContent.offsetWidth; 
@@ -226,49 +185,74 @@ function showConfirmModal() {
 
 function closeConfirmModal() {
     playSound('button'); 
-    if (confirmModal) {
-        confirmModal.classList.add('hidden');
-        confirmModal.classList.remove('flex', 'animate__fadeIn');
+    if (confirmModal) { confirmModal.classList.add('hidden'); confirmModal.classList.remove('flex', 'animate__fadeIn'); }
+}
+
+// ==========================================
+// HỆ THỐNG LƯU TRỮ (SAVE GAME CHECKPOINT)
+// ==========================================
+function checkSaveAndStart(role) {
+    playSound('button');
+    const savedScene = localStorage.getItem(SAVE_KEY_PREFIX + role);
+    const startScene = role + '_man_1';
+
+    if (savedScene && savedScene !== startScene) {
+        if (saveModal) {
+            saveModal.classList.remove('hidden');
+            saveModal.classList.add('flex', 'animate__fadeIn');
+            
+            const btnResume = document.getElementById('btn-resume-save');
+            const btnRestart = document.getElementById('btn-restart-save');
+            
+            let match = savedScene.match(/_man_(\d+)/);
+            let manNumber = match ? match[1] : '';
+            document.getElementById('save-modal-text').innerText = `Hệ thống phát hiện bạn đang chơi dở ở Màn ${manNumber}. Bạn muốn tiếp tục hay chơi lại từ đầu?`;
+
+            btnResume.onclick = () => {
+                playSound('button');
+                saveModal.classList.add('hidden'); saveModal.classList.remove('flex');
+                startRole(role, savedScene);
+            };
+
+            btnRestart.onclick = () => {
+                playSound('button');
+                saveModal.classList.add('hidden'); saveModal.classList.remove('flex');
+                localStorage.removeItem(SAVE_KEY_PREFIX + role);
+                startRole(role, startScene);
+            };
+        }
+    } else {
+        startRole(role, startScene);
     }
 }
 
-function startRole(role) {
-    playSound('button'); 
-    // FIXED: Giữ nguyên cơ chế Fixed Overlay khóa chặt màn hình
+function startRole(role, sceneToLoad) {
+    currentPlayingRole = role;
     bgOverlay.className = "fixed inset-0 bg-black/80 pointer-events-none transition-colors duration-1000 z-10";
 
-    roleScreen.classList.add('hidden');
-    roleScreen.classList.remove('flex');
-    
-    gameScreen.classList.remove('hidden');
-    gameScreen.classList.add('flex', 'animate__fadeIn');
-
-    if (btnResetRole) {
-        btnResetRole.classList.remove('hidden');
-        btnResetRole.classList.add('flex');
-    }
+    roleScreen.classList.add('hidden'); roleScreen.classList.remove('flex');
+    gameScreen.classList.remove('hidden'); gameScreen.classList.add('flex', 'animate__fadeIn');
+    if (btnResetRole) { btnResetRole.classList.remove('hidden'); btnResetRole.classList.add('flex'); }
 
     if (role === 'mai') {
-        topNavTitle.innerText = "ĐANG ĐÓNG VAI: MAI";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-emerald-400 uppercase truncate drop-shadow-md transition-colors duration-300";
-        topNavSub.innerText = "Góc nhìn: Nạn nhân nữ chịu đựng & phản kháng";
-        loadScene('mai_man_1');
+        topNavTitle.innerText = "Nhân Vật: MAI";
+        topNavTitle.className = "text-[14px] sm:text-lg md:text-2xl font-black tracking-widest text-emerald-400 uppercase truncate drop-shadow-md transition-colors duration-300";
+        topNavSub.innerText = "Nạn nhân nữ chịu đựng";
     } else if (role === 'minh') {
-        topNavTitle.innerText = "ĐANG ĐÓNG VAI: MINH";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-indigo-400 uppercase truncate drop-shadow-md transition-colors duration-300";
-        topNavSub.innerText = "Góc nhìn: Nạn nhân nam chịu đựng & phản kháng";
-        loadScene('minh_man_1');
+        topNavTitle.innerText = "Nhân Vật: MINH";
+        topNavTitle.className = "text-[14px] sm:text-lg md:text-2xl font-black tracking-widest text-indigo-400 uppercase truncate drop-shadow-md transition-colors duration-300";
+        topNavSub.innerText = "Nạn nhân nam chịu đựng";
     } else if (role === 'linh') {
-        topNavTitle.innerText = "ĐANG ĐÓNG VAI: LINH";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-sky-400 uppercase truncate drop-shadow-md transition-colors duration-300";
-        topNavSub.innerText = "Góc nhìn: Người chứng kiến nữ & tâm lý";
-        loadScene('linh_man_1');
+        topNavTitle.innerText = "Nhân Vật: LINH";
+        topNavTitle.className = "text-[14px] sm:text-lg md:text-2xl font-black tracking-widest text-sky-400 uppercase truncate drop-shadow-md transition-colors duration-300";
+        topNavSub.innerText = "Người chứng kiến nữ";
     } else if (role === 'nam') {
-        topNavTitle.innerText = "ĐANG ĐÓNG VAI: NAM";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-amber-400 uppercase truncate drop-shadow-md transition-colors duration-300";
-        topNavSub.innerText = "Góc nhìn: Người chứng kiến nam & can thiệp";
-        loadScene('nam_man_1');
+        topNavTitle.innerText = "Nhân Vật: NAM";
+        topNavTitle.className = "text-[14px] sm:text-lg md:text-2xl font-black tracking-widest text-amber-400 uppercase truncate drop-shadow-md transition-colors duration-300";
+        topNavSub.innerText = "Người chứng kiến nam";
     }
+    
+    loadScene(sceneToLoad);
 }
 
 function resetGame() {
@@ -276,65 +260,49 @@ function resetGame() {
     if (transitionTimer) clearTimeout(transitionTimer); 
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
-    // FIXED: Giữ nguyên cơ chế Fixed Overlay khóa chặt màn hình
-    bgOverlay.className = "fixed inset-0 bg-black/70 backdrop-blur-[2px] pointer-events-none transition-colors duration-1000 z-10";
+    bgOverlay.className = "fixed inset-0 bg-black/75 backdrop-blur-[3px] pointer-events-none transition-colors duration-1000 z-10";
 
-    if (resultOverlay) {
-        resultOverlay.classList.add('hidden');
-        resultOverlay.classList.remove('flex', 'animate__fadeIn');
-    }
-    gameScreen.classList.add('hidden');
-    gameScreen.classList.remove('flex', 'animate__fadeIn');
-    
-    roleScreen.classList.remove('hidden');
-    roleScreen.classList.add('flex', 'animate__fadeIn');
+    if (resultOverlay) { resultOverlay.classList.add('hidden'); resultOverlay.classList.remove('flex', 'animate__fadeIn'); }
+    gameScreen.classList.add('hidden'); gameScreen.classList.remove('flex', 'animate__fadeIn');
+    roleScreen.classList.remove('hidden'); roleScreen.classList.add('flex', 'animate__fadeIn');
 
     container.style.backgroundImage = `url('${DEFAULT_BG}')`;
 
-    if (btnResetRole) {
-        btnResetRole.classList.add('hidden');
-        btnResetRole.classList.remove('flex');
-    }
-
+    if (btnResetRole) { btnResetRole.classList.add('hidden'); btnResetRole.classList.remove('flex'); }
     if (topNavTitle && topNavSub) {
         topNavTitle.innerText = "CHỌN NHÂN VẬT";
-        topNavTitle.className = "text-sm sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-colors duration-300";
+        topNavTitle.className = "text-[14px] sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-colors duration-300";
         topNavSub.innerText = "Giáo dục về vấn nạn bạo lực học đường";
     }
 
-    gameScreen.className = "hidden w-full h-full max-h-[720px] shrink-0 flex-col md:flex-row items-stretch transition-opacity duration-300 min-h-0 overflow-visible relative mt-8 sm:mt-0";
-
-    activeMobileCardIndex = 0;
-    updateMobileDots();
+    gameScreen.className = "hidden w-full h-full shrink-0 flex-col md:flex-row items-stretch transition-opacity duration-300 min-h-0 relative mt-0";
+    activeMobileCardIndex = 0; updateMobileDots();
 }
 
-// ==========================================
-// HÀM CHÍNH: NẠP SCENE VÀ XÁO TRỘN ĐÁP ÁN (SHUFFLE)
-// ==========================================
 function loadScene(sceneId) {
     if (transitionTimer) clearTimeout(transitionTimer);
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
-    if (resultOverlay) {
-        resultOverlay.classList.add('hidden');
-        resultOverlay.classList.remove('flex', 'animate__fadeIn');
-    }
+    if (resultOverlay) { resultOverlay.classList.add('hidden'); resultOverlay.classList.remove('flex', 'animate__fadeIn'); }
 
     if (sceneId === 'RESET_GAME') {
-        resetGame();
-        return;
+        localStorage.removeItem(SAVE_KEY_PREFIX + currentPlayingRole);
+        resetGame(); return;
     }
 
     const data = STORY_DATA[sceneId];
     if (!data) return;
 
+    if (sceneId.includes('_man_') && !data.isResult) {
+        localStorage.setItem(SAVE_KEY_PREFIX + currentPlayingRole, sceneId);
+    }
+
     if (dialogueContainer) {
-        dialogueContainer.className = `h-[52%] sm:h-[48%] md:h-full md:w-7/12 lg:w-1/2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/90 backdrop-blur-xl flex flex-col justify-between min-h-0 shrink-0 z-20 border transition-colors duration-500 glass-glow ${data.bgTheme}`;
+        // Hộp thoại nay được khóa cứng chiều cao 66%, siêu rộng để chứa chữ lớn
+        dialogueContainer.className = `absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[66%] sm:h-[65%] md:h-full p-4 sm:p-5 md:p-8 pb-5 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto ${data.bgTheme}`;
     }
     
-    if (data.bgImage) {
-        container.style.backgroundImage = `url('${data.bgImage}')`;
-    }
+    if (data.bgImage) { container.style.backgroundImage = `url('${data.bgImage}')`; }
 
     if (charSpriteEl && data.charSprite) {
         charSpriteEl.src = data.charSprite;
@@ -343,7 +311,7 @@ function loadScene(sceneId) {
         charSpriteEl.classList.add('animate__headShake');
     }
 
-    charNameEl.className = `font-black text-lg sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md ${data.charColor}`;
+    charNameEl.className = `font-black text-[16px] sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md ${data.charColor}`;
     charNameEl.innerText = data.charName;
 
     if (data.isResult) {
@@ -351,11 +319,7 @@ function loadScene(sceneId) {
         storyTextEl.classList.remove('typing-cursor');
         typeWriter(storyTextEl, "Đang quan sát diễn biến và hậu quả...", 0, 20);
         choicesBoxEl.innerHTML = ''; 
-
-        transitionTimer = setTimeout(() => {
-            showResultOverlay(data);
-        }, 1500); 
-
+        transitionTimer = setTimeout(() => { showResultOverlay(data); }, 1500); 
         return;
     }
 
@@ -364,35 +328,34 @@ function loadScene(sceneId) {
     
     choicesBoxEl.innerHTML = ''; 
 
-    let normalChoices = [];
-    let specialChoices = [];
-    
+    let normalChoices = []; let specialChoices = [];
     data.choices.forEach(choice => {
-        if (choice.isUndo || choice.nextScene === 'RESET_GAME') {
-            specialChoices.push(choice);
-        } else {
-            normalChoices.push(choice);
-        }
+        if (choice.isUndo || choice.nextScene === 'RESET_GAME') { specialChoices.push(choice); } 
+        else { normalChoices.push(choice); }
     });
-
     for (let i = normalChoices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [normalChoices[i], normalChoices[j]] = [normalChoices[j], normalChoices[i]];
     }
-
     const finalChoices = [...normalChoices, ...specialChoices];
 
     finalChoices.forEach((choice, index) => {
         const btn = document.createElement('button');
         btn.classList.add('animate__animated', 'animate__fadeInUp');
-        btn.style.animationDelay = `${index * 0.12}s`; 
+        btn.style.animationDelay = `${index * 0.1}s`; 
 
         if (choice.isUndo) {
-            btn.className += " relative overflow-hidden w-full text-left bg-amber-700/90 hover:bg-amber-600 border border-amber-600/50 text-white font-semibold p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow active:scale-[0.99] text-[13px] sm:text-base md:text-lg flex items-center justify-between group shrink-0 transform-gpu";
+            // Nút đặc biệt - Size chữ 14px, p-3.5 cho độ rộng ngón tay
+            btn.className += " relative overflow-hidden w-full text-left bg-amber-700/90 hover:bg-amber-600 border border-amber-600/50 text-white font-semibold p-3.5 sm:p-4 rounded-xl transition-all duration-300 shadow active:scale-[0.98] text-[14px] sm:text-base md:text-lg flex items-center justify-between group shrink-0 transform-gpu";
+            btn.innerHTML = `<span class="pr-2 drop-shadow-md relative z-10">${choice.text}</span>`;
         } else {
-            btn.className += " relative overflow-hidden w-full text-left bg-slate-800/90 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-100 p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow active:scale-[0.99] text-[13px] sm:text-base md:text-lg font-medium flex items-center justify-between group leading-normal sm:leading-relaxed shrink-0 transform-gpu";
+            // Nút Câu hỏi - Size chữ 14px, p-3.5
+            btn.className += " relative overflow-hidden w-full text-left bg-slate-800/80 backdrop-blur-md hover:bg-slate-700 border border-slate-600/50 hover:border-slate-400 text-slate-100 p-3.5 sm:p-4 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.2)] active:scale-[0.98] text-[14px] sm:text-base md:text-lg font-medium flex items-center justify-between group leading-snug shrink-0 transform-gpu";
+            btn.innerHTML = `
+                <span class="pr-3 drop-shadow-md relative z-10">${choice.text}</span>
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 shrink-0 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            `;
         }
-        btn.innerHTML = `<span class="pr-2 sm:pr-4 drop-shadow-md relative z-10">${choice.text}</span>`;
         
         btn.onclick = (e) => {
             const allBtns = choicesBoxEl.querySelectorAll('button');
@@ -407,9 +370,7 @@ function loadScene(sceneId) {
             const x = e.clientX ? e.clientX - rect.left : rect.width / 2;
             const y = e.clientY ? e.clientY - rect.top : rect.height / 2;
             const ripple = document.createElement('span');
-            ripple.className = 'ripple';
-            ripple.style.left = `${x}px`;
-            ripple.style.top = `${y}px`;
+            ripple.className = 'ripple'; ripple.style.left = `${x}px`; ripple.style.top = `${y}px`;
             btn.appendChild(ripple);
             btn.classList.add('btn-selected');
 
@@ -419,29 +380,17 @@ function loadScene(sceneId) {
             void charSpriteEl.offsetWidth; 
 
             if (choice.nextScene === 'RESET_GAME' || choice.isUndo) {
-                playSound('button');
-                charSpriteEl.classList.add('anim-char-progress');
+                playSound('button'); charSpriteEl.classList.add('anim-char-progress');
             } 
             else if (nextData && nextData.isResult) {
                 let isSuccess = nextData.resultColor && nextData.resultColor.includes('emerald');
-                if (isSuccess) {
-                    playSound('complete');
-                    charSpriteEl.classList.add('anim-char-success'); 
-                } else {
-                    playSound('fail');
-                    charSpriteEl.classList.add('anim-char-fail');    
-                }
+                if (isSuccess) { playSound('complete'); charSpriteEl.classList.add('anim-char-success'); } 
+                else { playSound('fail'); charSpriteEl.classList.add('anim-char-fail'); }
             } 
-            else {
-                playSound('progress'); 
-                charSpriteEl.classList.add('anim-char-progress');    
-            }
+            else { playSound('progress'); charSpriteEl.classList.add('anim-char-progress'); }
 
-            setTimeout(() => {
-                loadScene(choice.nextScene);
-            }, 350); 
+            setTimeout(() => { loadScene(choice.nextScene); }, 350); 
         };
-        
         choicesBoxEl.appendChild(btn);
     });
 
@@ -472,7 +421,7 @@ function showResultOverlay(data) {
     }
 
     resultTitle.innerText = data.resultTitle || "KẾT QUẢ";
-    resultTitle.className = `text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.9)] mb-3 sm:mb-6 animate__animated animate__fadeInUp ${data.resultColor || 'text-white'}`;
+    resultTitle.className = `text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.9)] mb-3 animate__animated animate__fadeInUp ${data.resultColor || 'text-white'}`;
     
     if (resultImg) {
         let charId = 1; 
@@ -497,70 +446,39 @@ function showResultOverlay(data) {
     data.choices.forEach(choice => {
         const btn = document.createElement('button');
         if (choice.isUndo) {
-            btn.className = "w-full text-center bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-4 sm:p-5 rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(245,158,11,0.3)] active:scale-[0.98] text-base sm:text-lg md:text-xl flex items-center justify-center gap-3 group border border-yellow-400/30 transform-gpu";
-            btn.innerHTML = `
-                <svg class="w-6 h-6 transform group-hover:-rotate-45 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-                <span class="drop-shadow-sm">${choice.text}</span>
-            `;
+            btn.className = "w-full text-center bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-3.5 sm:p-5 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(245,158,11,0.3)] active:scale-[0.98] text-[14px] sm:text-lg md:text-xl flex items-center justify-center gap-2 group border border-yellow-400/30 transform-gpu";
+            btn.innerHTML = `<svg class="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:-rotate-45 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg><span class="drop-shadow-sm">${choice.text}</span>`;
         } else {
-            btn.className = "w-full text-center bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black p-4 sm:p-5 rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(16,185,129,0.3)] active:scale-[0.98] text-base sm:text-lg md:text-xl flex items-center justify-center gap-3 group border border-emerald-400/30 transform-gpu";
-            btn.innerHTML = `
-                <span class="drop-shadow-sm">${choice.text}</span>
-                <svg class="w-6 h-6 transform group-hover:translate-x-2 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-            `;
+            btn.className = "w-full text-center bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black p-3.5 sm:p-5 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(16,185,129,0.3)] active:scale-[0.98] text-[14px] sm:text-lg md:text-xl flex items-center justify-center gap-2 group border border-emerald-400/30 transform-gpu";
+            btn.innerHTML = `<span class="drop-shadow-sm">${choice.text}</span><svg class="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:translate-x-2 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>`;
         }
-        
-        btn.onclick = () => {
-            playSound('button');
-            loadScene(choice.nextScene);
-        };
+        btn.onclick = () => { playSound('button'); loadScene(choice.nextScene); };
         resultChoicesBox.appendChild(btn);
     });
-
-    resultOverlay.classList.remove('hidden');
-    resultOverlay.classList.add('flex', 'animate__fadeIn');
+    resultOverlay.classList.remove('hidden'); resultOverlay.classList.add('flex', 'animate__fadeIn');
 }
 
 function switchMobileCard(direction) {
     playSound('button'); 
     activeMobileCardIndex = (activeMobileCardIndex + direction + 4) % 4;
-    
     const cards = [
-        document.getElementById('card-mai'),
-        document.getElementById('card-minh'),
-        document.getElementById('card-linh'),
-        document.getElementById('card-nam')
+        document.getElementById('card-mai'), document.getElementById('card-minh'),
+        document.getElementById('card-linh'), document.getElementById('card-nam')
     ];
-
     cards.forEach((card, index) => {
         if (!card) return;
-        if (index === activeMobileCardIndex) {
-            card.classList.remove('hidden');
-            card.classList.add('flex', 'animate__fadeIn');
-        } else {
-            card.classList.add('hidden');
-            card.classList.remove('flex', 'animate__fadeIn');
-        }
+        if (index === activeMobileCardIndex) { card.classList.remove('hidden'); card.classList.add('flex', 'animate__fadeIn'); } 
+        else { card.classList.add('hidden'); card.classList.remove('flex', 'animate__fadeIn'); }
     });
-
     updateMobileDots();
 }
 
 function updateMobileDots() {
-    const colors = [
-        "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]", 
-        "bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]", 
-        "bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.8)]", 
-        "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]"
-    ];
-    
+    const colors = ["bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]", "bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]", "bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.8)]", "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]"];
     for (let i = 0; i < 4; i++) {
         const dot = document.getElementById(`dot-${i}`);
         if (!dot) continue;
-        if (i === activeMobileCardIndex) {
-            dot.className = `w-6 h-1.5 ${colors[i]} rounded-full transition-colors duration-300`;
-        } else {
-            dot.className = "w-1.5 h-1.5 bg-white/20 rounded-full transition-colors duration-300";
-        }
+        if (i === activeMobileCardIndex) { dot.className = `w-6 h-1.5 ${colors[i]} rounded-full transition-colors duration-300`; } 
+        else { dot.className = "w-1.5 h-1.5 bg-white/20 rounded-full transition-colors duration-300"; }
     }
 }
