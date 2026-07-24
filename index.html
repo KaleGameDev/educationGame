@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>GÓC KHUẤT - Game Tương Tác Giáo Dục</title>
-    <!-- 👉 Favicon Khiên bảo vệ xóa lỗi 404: -->
+    <!-- 👉 Favicon Khiên bảo vệ xóa sạch lỗi 404 Console: -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -86,7 +86,6 @@
                                     <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn đang hứng chịu tin đồn thất thiệt và sự cô lập từ bạn bè...</p>
                                 </div>
                                 <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-emerald-600 border border-slate-700/50 group-hover:border-emerald-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
-                                    <!-- 👉 SVG Play sạch lỗi cho Mai -->
                                     <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     NHẬP VAI
                                 </div>
@@ -109,7 +108,6 @@
                                     <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn đối mặt với bạo lực sân bóng, trấn lột và sự miệt thị yếu đuối...</p>
                                 </div>
                                 <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-indigo-600 border border-slate-700/50 group-hover:border-indigo-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
-                                    <!-- 👉 SVG Play sạch lỗi cho Minh -->
                                     <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     NHẬP VAI
                                 </div>
@@ -132,7 +130,6 @@
                                     <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn vô tình chứng kiến bạo lực mạng và áp lực độc hại từ bạn bè...</p>
                                 </div>
                                 <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-sky-600 border border-slate-700/50 group-hover:border-sky-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
-                                    <!-- 👉 SVG Play sạch lỗi cho Linh -->
                                     <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     NHẬP VAI
                                 </div>
@@ -155,7 +152,6 @@
                                     <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn chứng kiến cảnh hành hung trong nhà vệ sinh và áp lực hội anh lớn...</p>
                                 </div>
                                 <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-amber-600 border border-slate-700/50 group-hover:border-amber-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
-                                    <!-- 👉 SVG Play sạch lỗi cho Nam -->
                                     <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     NHẬP VAI
                                 </div>
@@ -177,36 +173,39 @@
                 </div>
             </div>
 
-            <!-- MÀN HÌNH GAMEPLAY TƯƠNG TÁC -->
+            <!-- MÀN HÌNH GAMEPLAY TƯƠNG TÁC (TỐI ƯU KỊCH TRẦN: HỘP THOẠI CAO 85%, KHÔNG GIAN ĐỌC CỰC ĐẠI) -->
             <div id="gameplay-screen" class="hidden w-full h-full shrink-0 flex-col md:flex-row items-stretch transition-opacity duration-300 min-h-0 relative mt-0">
                 
-                <!-- KHU VỰC NHÂN VẬT -->
-                <div class="absolute md:relative top-0 left-0 w-full md:w-5/12 lg:w-1/2 h-[42%] md:h-full flex items-end justify-center pointer-events-none z-10 overflow-visible">
-                    <div class="absolute bottom-[5%] md:bottom-10 left-1/2 -translate-x-1/2 w-48 h-48 md:w-96 md:h-96 bg-white/5 rounded-full blur-3xl pointer-events-none z-0"></div>
+                <!-- KHU VỰC NHÂN VẬT (Thu gọn còn 15% trên mobile, cô đọng gương mặt và biểu cảm ngay đỉnh màn hình) -->
+                <div class="absolute md:relative top-0 left-0 w-full md:w-5/12 lg:w-1/2 h-[15%] sm:h-[22%] md:h-full flex items-end justify-center pointer-events-none z-10 overflow-visible">
+                    <div class="absolute bottom-[5%] md:bottom-10 left-1/2 -translate-x-1/2 w-36 h-36 md:w-96 md:h-96 bg-white/5 rounded-full blur-3xl pointer-events-none z-0"></div>
                     
-                    <div class="absolute bottom-[0%] md:bottom-0 left-1/2 -translate-x-1/2 w-40 sm:w-64 h-6 sm:h-10 bg-black/80 rounded-[100%] blur-md pointer-events-none z-0 char-shadow transform-gpu"></div>
+                    <div class="absolute bottom-[0%] md:bottom-0 left-1/2 -translate-x-1/2 w-32 sm:w-64 h-4 sm:h-10 bg-black/80 rounded-[100%] blur-md pointer-events-none z-0 char-shadow transform-gpu"></div>
 
                     <div class="char-breathe absolute bottom-[0%] md:bottom-0 z-10 w-full h-full flex justify-center items-end pointer-events-none">
-                        <img id="char-sprite-img" src="" alt="Character Sprite" class="mt-auto -mb-6 sm:-mb-8 md:-mb-12 max-h-[38vh] sm:max-h-[48vh] md:max-h-[70vh] lg:max-h-[75vh] w-auto max-w-[95%] md:max-w-none object-contain object-bottom mx-auto transition-all duration-700 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] transform-gpu relative z-10 animate__animated will-change-transform">
+                        <!-- Tinh chỉnh max-h-[26vh] và -mb-2 giúp gương mặt nhân vật hiển thị sắc nét, nhô vừa vặn trên viền kính -->
+                        <img id="char-sprite-img" src="" alt="Character Sprite" class="mt-auto -mb-2 sm:-mb-5 md:-mb-10 max-h-[26vh] sm:max-h-[36vh] md:max-h-[68vh] lg:max-h-[72vh] w-auto max-w-[95%] md:max-w-none object-contain object-bottom mx-auto transition-all duration-500 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] transform-gpu relative z-10 animate__animated will-change-transform">
                     </div>
                 </div>
 
-                <!-- KHU VỰC HỘP THOẠI -->
-                <div id="dialogue-container" class="absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[58%] sm:h-[60%] md:h-full p-4 sm:p-5 md:p-8 pb-5 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto">
+                <!-- KHU VỰC HỘP THOẠI (Dâng lên 85% trên Mobile, không gian thênh thang, triệt tiêu vĩnh viễn cuộn chuột) -->
+                <div id="dialogue-container" class="absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[85%] sm:h-[78%] md:h-full p-3 sm:p-5 md:p-8 pb-4 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto">
                     
-                    <div id="char-name" class="font-black text-[16px] sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md"></div>
+                    <div id="char-name" class="font-black text-[15px] sm:text-xl md:text-2xl pb-1.5 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md"></div>
                     
-                    <div id="text-scroll-box" class="shrink-0 max-h-[35%] overflow-y-auto pr-2 my-2 sm:my-3 custom-scrollbar">
-                        <p id="story-text" class="text-[15px] sm:text-lg md:text-xl text-slate-100 leading-relaxed font-medium drop-shadow-sm pb-2"></p>
+                    <!-- Nới rộng vùng cốt truyện lên max-h-[40%], đọc văn bản dài thoải mái không lo nhức mắt -->
+                    <div id="text-scroll-box" class="shrink-0 max-h-[40%] overflow-y-auto pr-1 my-1.5 sm:my-2.5 custom-scrollbar">
+                        <p id="story-text" class="text-[14px] sm:text-lg md:text-xl text-slate-100 leading-relaxed font-medium drop-shadow-sm pb-1"></p>
                     </div>
                     
-                    <div class="border-t border-slate-800/60 my-1 shrink-0"></div>
+                    <div class="border-t border-slate-800/60 my-0.5 shrink-0"></div>
 
-                    <div id="choices-scroll-box" class="flex-1 min-h-0 overflow-y-auto pr-1 pt-2 custom-scrollbar pb-2">
-                        <div id="choices-box" class="flex flex-col gap-2.5 sm:gap-3 pb-1"></div>
+                    <!-- Vùng lựa chọn bệ đỡ rộng rãi, hiển thị trọn vẹn mọi phương án đáp án -->
+                    <div id="choices-scroll-box" class="flex-1 min-h-0 overflow-y-auto pr-1 pt-1.5 custom-scrollbar pb-1">
+                        <div id="choices-box" class="flex flex-col gap-2 sm:gap-2.5 pb-1"></div>
                     </div>
                 </div>
-            </div>
+            </div>  
 
         </main>
         
@@ -343,10 +342,10 @@
 
             <div class="flex flex-col sm:flex-row gap-3 w-full">
                 <button id="rc-btn-screenshot" class="flex-1 py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs sm:text-sm tracking-wider uppercase border border-white/15 shadow transition-all active:scale-95 flex items-center justify-center gap-2">
-                    <span>LƯU HỒ SƠ</span>
+                    <span>📸 LƯU HỒ SƠ</span>
                 </button>
                 <button id="rc-btn-restart-role" class="flex-1 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs sm:text-sm tracking-wider uppercase border border-emerald-400/40 shadow-[0_5px_20px_rgba(16,185,129,0.3)] transition-all active:scale-95 flex items-center justify-center gap-2">
-                    <span>CHƠI LẠI TUYẾN NÀY</span>
+                    <span>🔄 CHƠI LẠI TUYẾN NÀY</span>
                 </button>
                 <button id="rc-btn-menu" class="flex-[1.3] py-4 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black text-xs sm:text-sm tracking-wider uppercase border border-yellow-300/50 shadow-[0_5px_20px_rgba(245,158,11,0.4)] transition-all active:scale-95 flex items-center justify-center gap-2">
                     <span>★ KHÁM PHÁ NHÂN VẬT KHÁC</span>
@@ -355,7 +354,7 @@
         </div>
     </div>
 
-    <!-- CÁC SCRIPT -->
+    <!-- CÁC SCRIPT DỮ LIỆU -->
     <script src="js/data/data_mai.js"></script>
     <script src="js/data/data_minh.js"></script>
     <script src="js/data/data_linh.js"></script>
@@ -364,6 +363,10 @@
     
     <script src="js/audio.js"></script>
     <script src="js/minigames.js"></script>
+    
+    <!-- 👉 Thư viện html2canvas trang bị sẵn động cơ xuất ảnh Retina 100% -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <script src="js/report_card.js"></script>
     <script src="js/main.js"></script>
 </body>

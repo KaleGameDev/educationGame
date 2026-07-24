@@ -175,3 +175,15 @@
     position: fixed; bottom: 24px; left: 50%; transform: translate3d(-50%, 0, 0);
     z-index: 300; animation: toastSlideUp 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
+/* =================================================================
+   TỐI ƯU KÍCH THƯỚC NÚT ĐÁP ÁN TRÊN MOBILE (XÓA SỔ THANH CUỘN)
+   ================================================================= */
+@media (max-width: 640px) {
+    #choices-box button {
+        padding: 10px 14px !important;
+        font-size: 13.5px !important;
+        line-height: 1.35 !important;
+        border-radius: 12px !important;
+    }
+}
