@@ -3,86 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bạo Lực Học Đường - Web Game Tương Tác</title>
+    <title>GÓC KHUẤT - Game Tương Tác Giáo Dục</title>
+    <!-- 👉 Favicon Khiên bảo vệ xóa lỗi 404: -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <style>
-        /* Thanh cuộn siêu mỏng & Không bị che chữ */
-        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 10px; }
-        
-        @keyframes float-up {
-            0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0; }
-            20%, 80% { opacity: 0.8; }
-            100% { transform: translate3d(0, -150px, 0) scale(0.5); opacity: 0; }
-        }
-        .firefly {
-            position: absolute; background: rgba(253, 230, 138, 0.6);
-            box-shadow: 0 0 8px rgba(253, 230, 138, 0.8); border-radius: 50%;
-            pointer-events: none; will-change: transform, opacity;
-        }
-
-        @keyframes breathing {
-            0%, 100% { transform: translate3d(0, 0, 0); }
-            50% { transform: translate3d(0, -10px, 0); }
-        }
-        .char-breathe { animation: breathing 4s ease-in-out infinite; will-change: transform; }
-        
-        @keyframes shadow-breathe {
-            0%, 100% { transform: translate3d(-50%, 0, 0) scale(1); opacity: 0.8; }
-            50% { transform: translate3d(-50%, 0, 0) scale(0.8); opacity: 0.4; }
-        }
-        .char-shadow { animation: shadow-breathe 4s ease-in-out infinite; will-change: transform, opacity; }
-
-        .ripple {
-            position: absolute; border-radius: 50%; transform: scale(0);
-            animation: ripple-anim 0.4s ease-out; background-color: rgba(255, 255, 255, 0.2);
-            pointer-events: none; width: 100px; height: 100px;
-            margin-top: -50px; margin-left: -50px; will-change: transform, opacity;
-        }
-        @keyframes ripple-anim { 100% { transform: scale(12); opacity: 0; } }
-        .btn-selected {
-            background-color: rgba(255, 255, 255, 0.2) !important;
-            border-color: rgba(255, 255, 255, 0.9) !important;
-            transform: scale(0.98) !important; transition: all 0.2s ease-out !important;
-        }
-
-        @keyframes char-impact-progress {
-            0%, 100% { transform: scale(1) translateY(0); filter: brightness(1); }
-            40% { transform: scale(1.03) translateY(-8px); filter: brightness(1.15); }
-        }
-        .anim-char-progress { animation: char-impact-progress 0.35s ease-out !important; }
-
-        @keyframes char-impact-fail {
-            0%, 100% { transform: translateX(0) scale(1); filter: brightness(1) contrast(1); }
-            20%, 60% { transform: translateX(-10px) scale(0.97); filter: brightness(0.7) contrast(1.2); }
-            40%, 80% { transform: translateX(10px) scale(0.97); filter: brightness(0.7) contrast(1.2); }
-        }
-        .anim-char-fail { animation: char-impact-fail 0.4s ease-in-out !important; }
-
-        @keyframes char-impact-success {
-            0%, 100% { transform: scale(1) translateY(0); filter: brightness(1); }
-            40% { transform: scale(1.05) translateY(-15px); filter: brightness(1.25); }
-        }
-        .anim-char-success { animation: char-impact-success 0.5s ease-out !important; }
-
-        @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .typing-cursor::after {
-            content: ' ▍'; color: #10b981; animation: blink-cursor 0.8s step-end infinite;
-            text-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
-        }
-
-        @keyframes bg-breathe { 0% { transform: scale(1.0); } 100% { transform: scale(1.06); } }
-        .bg-ambient { animation: bg-breathe 25s ease-in-out infinite alternate; will-change: transform; }
-
-        .glass-glow { position: relative; }
-        .glass-glow::before {
-            content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 1.5px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            z-index: 10; border-radius: 50%;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-black text-white font-sans select-none overflow-hidden h-[100dvh] w-full relative">
 
@@ -96,7 +22,7 @@
 
     <div class="h-full w-full flex flex-col justify-between p-0 md:p-6 lg:p-8 relative z-20">
         
-        <!-- HEADER ĐÃ FIX LỖI: Thêm pl-4 và pr-16 để đẩy nút Reset sang trái, chừa chỗ cho Âm thanh -->
+        <!-- HEADER -->
         <header id="main-header" class="hidden py-3 pl-4 pr-16 md:px-0 flex-row justify-between items-center shrink-0 w-full max-w-7xl mx-auto gap-2">
             <div class="flex-1 min-w-0">
                 <h1 id="top-nav-title" class="text-[14px] sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-colors duration-300">
@@ -121,10 +47,10 @@
 
                 <div class="text-center mb-10 sm:mb-14 relative z-10">
                     <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-[100px] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-[#fde68a] via-[#d97706] to-[#78350f] drop-shadow-[0_8px_8px_rgba(0,0,0,0.9)] uppercase mb-4 sm:mb-6 leading-tight sm:leading-none py-2 animate__animated animate__zoomIn transform-gpu">
-                        Bạo Lực<br/>Học Đường
+                        GÓC<br/>KHUẤT
                     </h1>
                     <p class="text-sm sm:text-base md:text-lg lg:text-xl text-[#fef3c7] font-medium max-w-2xl mx-auto px-4 drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)] opacity-90 animate__animated animate__fadeInUp animate__delay-1s transform-gpu">
-                        Dự án Game tương tác <br class="hidden sm:block">giáo dục chuyên sâu về vấn nạn bạo lực học đường.
+                        Dự án game tương tác hỗ trợ giáo dục nhận thức của học sinh về vấn nạn bạo lực học đường.
                     </p>
                 </div>
 
@@ -160,7 +86,8 @@
                                     <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn đang hứng chịu tin đồn thất thiệt và sự cô lập từ bạn bè...</p>
                                 </div>
                                 <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-emerald-600 border border-slate-700/50 group-hover:border-emerald-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <!-- 👉 SVG Play sạch lỗi cho Mai -->
+                                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     NHẬP VAI
                                 </div>
                             </div>
@@ -182,7 +109,8 @@
                                     <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn đối mặt với bạo lực sân bóng, trấn lột và sự miệt thị yếu đuối...</p>
                                 </div>
                                 <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-indigo-600 border border-slate-700/50 group-hover:border-indigo-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <!-- 👉 SVG Play sạch lỗi cho Minh -->
+                                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     NHẬP VAI
                                 </div>
                             </div>
@@ -204,7 +132,8 @@
                                     <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn vô tình chứng kiến bạo lực mạng và áp lực độc hại từ bạn bè...</p>
                                 </div>
                                 <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-sky-600 border border-slate-700/50 group-hover:border-sky-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <!-- 👉 SVG Play sạch lỗi cho Linh -->
+                                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     NHẬP VAI
                                 </div>
                             </div>
@@ -226,7 +155,8 @@
                                     <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn chứng kiến cảnh hành hung trong nhà vệ sinh và áp lực hội anh lớn...</p>
                                 </div>
                                 <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-amber-600 border border-slate-700/50 group-hover:border-amber-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <!-- 👉 SVG Play sạch lỗi cho Nam -->
+                                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     NHẬP VAI
                                 </div>
                             </div>
@@ -247,28 +177,26 @@
                 </div>
             </div>
 
-            <!-- MÀN HÌNH GAMEPLAY TƯƠNG TÁC (TỐI ƯU CỰC ĐẠI - UI CHIẾM 66%, CHỮ LỚN, CẮT EO NHÂN VẬT) -->
+            <!-- MÀN HÌNH GAMEPLAY TƯƠNG TÁC -->
             <div id="gameplay-screen" class="hidden w-full h-full shrink-0 flex-col md:flex-row items-stretch transition-opacity duration-300 min-h-0 relative mt-0">
                 
-                <!-- KHU VỰC NHÂN VẬT (Chỉ 38% - Cắt đúng eo để nhường chỗ đọc chữ) -->
-                <div class="absolute md:relative top-0 left-0 w-full md:w-5/12 lg:w-1/2 h-[38%] md:h-full flex items-end justify-center pointer-events-none z-10 overflow-visible">
+                <!-- KHU VỰC NHÂN VẬT -->
+                <div class="absolute md:relative top-0 left-0 w-full md:w-5/12 lg:w-1/2 h-[42%] md:h-full flex items-end justify-center pointer-events-none z-10 overflow-visible">
                     <div class="absolute bottom-[5%] md:bottom-10 left-1/2 -translate-x-1/2 w-48 h-48 md:w-96 md:h-96 bg-white/5 rounded-full blur-3xl pointer-events-none z-0"></div>
                     
                     <div class="absolute bottom-[0%] md:bottom-0 left-1/2 -translate-x-1/2 w-40 sm:w-64 h-6 sm:h-10 bg-black/80 rounded-[100%] blur-md pointer-events-none z-0 char-shadow transform-gpu"></div>
 
                     <div class="char-breathe absolute bottom-[0%] md:bottom-0 z-10 w-full h-full flex justify-center items-end pointer-events-none">
-                        <!-- h-[120%] kết hợp origin-bottom tràn viền 3D lên trên mượt mà -->
-                        <img id="char-sprite-img" src="" alt="Character Sprite" class="h-[120%] sm:h-[125%] md:h-[105%] lg:h-[100%] w-auto max-w-none object-contain origin-bottom animate__animated transform-gpu will-change-transform">
+                        <img id="char-sprite-img" src="" alt="Character Sprite" class="mt-auto -mb-6 sm:-mb-8 md:-mb-12 max-h-[38vh] sm:max-h-[48vh] md:max-h-[70vh] lg:max-h-[75vh] w-auto max-w-[95%] md:max-w-none object-contain object-bottom mx-auto transition-all duration-700 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] transform-gpu relative z-10 animate__animated will-change-transform">
                     </div>
                 </div>
 
-                <!-- KHU VỰC HỘP THOẠI (Phóng to 66% mobile - Rộng rãi, không đè nút, dễ bấm) -->
-                <div id="dialogue-container" class="absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[66%] sm:h-[65%] md:h-full p-4 sm:p-5 md:p-8 pb-5 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto">
+                <!-- KHU VỰC HỘP THOẠI -->
+                <div id="dialogue-container" class="absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[58%] sm:h-[60%] md:h-full p-4 sm:p-5 md:p-8 pb-5 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto">
                     
                     <div id="char-name" class="font-black text-[16px] sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md"></div>
                     
                     <div id="text-scroll-box" class="shrink-0 max-h-[35%] overflow-y-auto pr-2 my-2 sm:my-3 custom-scrollbar">
-                        <!-- Font size tăng lên 15px cho cốt truyện -->
                         <p id="story-text" class="text-[15px] sm:text-lg md:text-xl text-slate-100 leading-relaxed font-medium drop-shadow-sm pb-2"></p>
                     </div>
                     
@@ -287,7 +215,7 @@
         </footer>
     </div>
 
-    <!-- CÁC MODAL ĐƯỢC GIỮ NGUYÊN BÊN DƯỚI ... -->
+    <!-- CÁC MODAL HỆ THỐNG -->
     <div id="result-overlay" class="hidden fixed inset-0 z-[100] w-screen h-[100dvh] bg-slate-950/95 backdrop-blur-2xl flex-col justify-between overflow-y-auto custom-scrollbar animate__animated transition-opacity duration-500 select-none">
         <div class="w-full px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center relative z-10 border-b border-white/10 bg-black/40 shrink-0">
             <div id="result-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-sm font-extrabold uppercase tracking-widest border"></div>
@@ -341,13 +269,102 @@
         </div>
     </div>
 
-    <!-- NÚT ÂM THANH FIX TRÊN CÙNG BÊN PHẢI -->
+    <!-- NÚT ÂM THANH -->
     <button id="btn-audio-toggle" onclick="toggleAudio()" class="fixed top-3 right-3 md:bottom-6 md:right-6 md:top-auto z-[200] bg-slate-900/90 hover:bg-slate-800 text-amber-400 hover:text-amber-200 p-2.5 md:p-3.5 rounded-full border border-slate-700 shadow-[0_0_15px_rgba(0,0,0,0.5)] transition-transform duration-300 active:scale-90 transform-gpu">
-        <svg id="icon-vol-on" class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        <svg id="icon-vol-on" class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 011-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
         <svg id="icon-vol-off" class="w-4 h-4 sm:w-6 sm:h-6 hidden text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
     </button>
 
-    <script src="js/data.js"></script>
+    <div id="minigame-overlay" class="hidden fixed inset-0 z-[180] w-screen h-[100dvh] bg-slate-950/85 backdrop-blur-xl p-3 sm:p-6"></div>
+    <div id="summary-overlay" class="hidden fixed inset-0 z-[190] w-screen h-[100dvh] bg-slate-950/90 backdrop-blur-xl"></div>
+
+    <!-- ================================================================= -->
+    <!-- TRỤ CỘT 3: BẢNG HỒ SƠ TÂM LÝ CUỐI GAME (PSYCHOLOGICAL REPORT CARD) -->
+    <!-- ================================================================= -->
+    <div id="report-card-overlay" class="fixed inset-0 z-[200] w-screen h-[100dvh] bg-black/90 backdrop-blur-2xl hidden items-center justify-center p-3 sm:p-4 select-none overflow-y-auto custom-scrollbar opacity-0 transition-opacity duration-500">
+        <div id="rc-bg-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vh] rounded-full blur-[160px] pointer-events-none transition-colors duration-1000 bg-emerald-600/20"></div>
+
+        <div class="relative w-full max-w-2xl bg-slate-900/85 border border-white/15 rounded-[32px] p-5 sm:p-8 shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col items-center z-10 my-auto transform-gpu transition-all duration-500">
+            <div class="absolute top-3 right-3 sm:top-4 sm:right-4 rotate-12 pointer-events-none z-20 opacity-90 scale-80 sm:scale-100 origin-top-right">
+                <div class="border-4 border-amber-500/80 rounded-full p-2 sm:p-3 bg-slate-950/80 backdrop-blur-md shadow-[0_0_20px_rgba(245,158,11,0.4)] flex items-center justify-center rc-stamp-anim">
+                    <span class="text-[10px] sm:text-xs font-black text-amber-400 tracking-widest uppercase text-center leading-tight">CHỨNG NHẬN<br>HOÀN THÀNH</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center text-center w-full mb-6 border-b border-white/10 pb-5">
+                <span class="text-[11px] bg-white/10 text-slate-300 border border-white/15 px-3.5 py-1 rounded-full font-black uppercase tracking-widest mb-3 shadow-inner">Hồ Sơ Phân Tích Tâm Lý Học Đường</span>
+                <h2 id="rc-char-name" class="text-2xl sm:text-4xl font-black text-white uppercase tracking-tight drop-shadow-md">NHÂN VẬT: MAI</h2>
+                <div id="rc-archetype-badge" class="mt-2 px-4 py-1.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-sm sm:text-base tracking-wide shadow-lg uppercase">
+                    ★ KHỐI PHA LÊ KIÊN CƯỜNG
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 w-full mb-6 items-center">
+                <div class="sm:col-span-5 flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-2xl p-4 relative overflow-hidden h-full min-h-[220px]">
+                    <div id="rc-avatar-glow" class="absolute inset-0 bg-gradient-to-t from-emerald-500/20 to-transparent pointer-events-none"></div>
+                    <img id="rc-avatar-img" src="assets/characters/Char_1_Happy.webp" alt="Avatar" class="max-h-[200px] w-auto object-contain drop-shadow-[0_10px_15px_rgba(0,0,0,0.8)] z-10 transform-gpu">
+                    <span id="rc-sub-title" class="text-[11px] font-bold text-slate-400 mt-2 z-10 text-center uppercase tracking-wider">Người vượt qua bóng tối</span>
+                </div>
+
+                <div class="sm:col-span-7 flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-2xl p-4 relative h-full">
+                    <span class="text-xs font-black text-slate-300 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> BIỂU ĐỒ NĂNG LỰC TÂM LÝ
+                    </span>
+                    <div class="relative w-full flex justify-center items-center py-2">
+                        <svg id="rc-radar-svg" viewBox="0 0 200 200" class="w-48 h-48 sm:w-56 sm:h-56 overflow-visible drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]"></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-4 w-full mb-6">
+                <div class="bg-black/50 border border-white/10 p-3 rounded-2xl text-center flex flex-col justify-center">
+                    <span class="text-[10px] sm:text-xs text-slate-400 font-extrabold uppercase">Thử Thách</span>
+                    <span id="rc-stat-games" class="text-lg sm:text-2xl font-black text-white mt-0.5">6/6 ★</span>
+                </div>
+                <div class="bg-black/50 border border-white/10 p-3 rounded-2xl text-center flex flex-col justify-center">
+                    <span class="text-[10px] sm:text-xs text-slate-400 font-extrabold uppercase">Lý Trí</span>
+                    <span id="rc-stat-logic" class="text-lg sm:text-2xl font-black text-emerald-400 mt-0.5">95%</span>
+                </div>
+                <div class="bg-black/50 border border-white/10 p-3 rounded-2xl text-center flex flex-col justify-center">
+                    <span class="text-[10px] sm:text-xs text-slate-400 font-extrabold uppercase">Tự Vệ</span>
+                    <span id="rc-stat-defense" class="text-lg sm:text-2xl font-black text-sky-400 mt-0.5">90%</span>
+                </div>
+            </div>
+
+            <div class="w-full bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-2 border-white/15 p-4 sm:p-5 rounded-2xl mb-6 shadow-inner relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
+                <div class="flex items-center gap-2 mb-1.5">
+                    <span class="text-sm font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                        💡 ĐÁNH GIÁ TỪ CHUYÊN GIA TÂM LÝ:
+                    </span>
+                </div>
+                <p id="rc-psych-note" class="text-xs sm:text-sm font-medium text-slate-200 leading-relaxed italic"></p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full">
+                <button id="rc-btn-screenshot" class="flex-1 py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs sm:text-sm tracking-wider uppercase border border-white/15 shadow transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span>LƯU HỒ SƠ</span>
+                </button>
+                <button id="rc-btn-restart-role" class="flex-1 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs sm:text-sm tracking-wider uppercase border border-emerald-400/40 shadow-[0_5px_20px_rgba(16,185,129,0.3)] transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span>CHƠI LẠI TUYẾN NÀY</span>
+                </button>
+                <button id="rc-btn-menu" class="flex-[1.3] py-4 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black text-xs sm:text-sm tracking-wider uppercase border border-yellow-300/50 shadow-[0_5px_20px_rgba(245,158,11,0.4)] transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span>★ KHÁM PHÁ NHÂN VẬT KHÁC</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CÁC SCRIPT -->
+    <script src="js/data/data_mai.js"></script>
+    <script src="js/data/data_minh.js"></script>
+    <script src="js/data/data_linh.js"></script>
+    <script src="js/data/data_nam.js"></script>
+    <script src="js/data/data_index.js"></script>
+    
+    <script src="js/audio.js"></script>
+    <script src="js/minigames.js"></script>
+    <script src="js/report_card.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

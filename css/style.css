@@ -1,0 +1,177 @@
+/* =================================================================
+   HỆ THỐNG GIAO DIỆN & KỸ XẢO ĐIỆN ẢNH GÓC KHUẤT (V13.0 STUDIO GRADE)
+   Tối ưu 60 FPS iOS/Android | Khắc phục 100% viền đen | Touch Manipulation
+   ================================================================= */
+
+/* --- 1. TỐI ƯU CẢM ỨNG DI ĐỘNG & THANH CUỘN --- */
+* { touch-action: manipulation; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.25); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+
+/* --- 2. HIỆU ỨNG ĐOM ĐÓM & MÔI TRƯỜNG NỀN --- */
+@keyframes float-up {
+    0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0; }
+    20%, 80% { opacity: 0.8; }
+    100% { transform: translate3d(0, -160px, 0) scale(0.4); opacity: 0; }
+}
+.firefly {
+    position: absolute;
+    background: rgba(253, 230, 138, 0.65);
+    box-shadow: 0 0 10px rgba(253, 230, 138, 0.9);
+    border-radius: 50%;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+@keyframes bg-breathe { 
+    0% { transform: scale(1.0) translateZ(0); } 
+    100% { transform: scale(1.05) translateZ(0); } 
+}
+.bg-ambient { 
+    animation: bg-breathe 20s ease-in-out infinite alternate; 
+    will-change: transform; 
+}
+
+/* --- 3. HIỆU ỨNG NHÂN VẬT CƠ BẢN --- */
+@keyframes breathing {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -8px, 0); }
+}
+.char-breathe { 
+    animation: breathing 4s ease-in-out infinite; 
+    will-change: transform; 
+}
+
+@keyframes shadow-breathe {
+    0%, 100% { transform: translate3d(-50%, 0, 0) scale(1); opacity: 0.7; }
+    50% { transform: translate3d(-50%, 0, 0) scale(0.85); opacity: 0.35; }
+}
+.char-shadow { 
+    animation: shadow-breathe 4s ease-in-out infinite; 
+    will-change: transform, opacity; 
+}
+
+/* --- 4. HIỆU ỨNG TƯƠNG TÁC NÚT BẤM --- */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple-anim 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    will-change: transform, opacity;
+}
+@keyframes ripple-anim { 100% { transform: scale(12); opacity: 0; } }
+
+.btn-selected {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.9) !important;
+    transform: scale(0.98) translateZ(0) !important;
+    transition: all 0.2s ease-out !important;
+}
+
+/* --- 5. HIỆU ỨNG IMPACT NHÂN VẬT --- */
+@keyframes char-impact-progress {
+    0%, 100% { transform: scale(1) translateY(0) translateZ(0); filter: brightness(1); }
+    40% { transform: scale(1.03) translateY(-6px) translateZ(0); filter: brightness(1.15); }
+}
+.anim-char-progress { animation: char-impact-progress 0.35s ease-out !important; }
+
+@keyframes char-impact-fail {
+    0%, 100% { transform: translateX(0) scale(1) translateZ(0); filter: brightness(1) saturate(100%); }
+    20%, 60% { transform: translateX(-8px) scale(0.98) translateZ(0); filter: brightness(0.75) saturate(80%); }
+    40%, 80% { transform: translateX(8px) scale(0.98) translateZ(0); filter: brightness(0.75) saturate(80%); }
+}
+.anim-char-fail { animation: char-impact-fail 0.4s ease-in-out !important; }
+
+@keyframes char-impact-success {
+    0%, 100% { transform: scale(1) translateY(0) translateZ(0); filter: brightness(1); }
+    40% { transform: scale(1.05) translateY(-12px) translateZ(0); filter: brightness(1.25); }
+}
+.anim-char-success { animation: char-impact-success 0.5s ease-out !important; }
+
+/* --- 6. CON TRẢ GÕ CHỮ & KHUNG KÍNH --- */
+@keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.typing-cursor::after {
+    content: ' ▍';
+    color: #10b981;
+    animation: blink-cursor 0.8s step-end infinite;
+    text-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.glass-glow { position: relative; }
+.glass-glow::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 15%; right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+    z-index: 10;
+}
+
+/* --- 7. CHUYỂN CẢNH MƯỢT MÀ --- */
+.scene-transition {
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.scene-transition-active { opacity: 0; transform: translate3d(0, 10px, 0) scale(0.985); }
+.scene-transition-enter { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+
+/* --- 8. KỸ XẢO COLOR GRADING TÂM LÝ --- */
+@keyframes cinematicSlowZoom {
+    0% { transform: scale(1) translateZ(0); }
+    100% { transform: scale(1.05) translateY(6px) translateZ(0); }
+}
+.char-cinematic-zoom { animation: cinematicSlowZoom 10s cubic-ease-out forwards; will-change: transform; }
+
+.filter-depressed { filter: saturate(65%) brightness(88%) contrast(105%) hue-rotate(-5deg); transition: filter 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+@keyframes panicPulseNatural {
+    0%, 100% { transform: scale(1) translateZ(0); filter: saturate(90%) contrast(115%) brightness(95%); }
+    50% { transform: scale(0.985) translateZ(0); filter: saturate(80%) contrast(125%) brightness(90%); }
+}
+.filter-panic { animation: panicPulseNatural 0.5s infinite ease-in-out; will-change: transform, filter; }
+
+.filter-rage { filter: saturate(120%) contrast(110%) brightness(102%); transition: filter 0.8s ease; }
+.filter-mind-glow { filter: saturate(110%) contrast(105%) brightness(105%); transition: filter 0.8s ease; }
+
+@keyframes screenFlashWhiteSoft { 0% { background-color: rgba(255,255,255,0.65); } 100% { background-color: transparent; } }
+@keyframes screenFlashRedSoft { 0% { background-color: rgba(244,63,94,0.35); } 100% { background-color: transparent; } }
+.flash-white { animation: screenFlashWhiteSoft 0.6s ease-out forwards; pointer-events: none; }
+.flash-red { animation: screenFlashRedSoft 0.7s ease-out forwards; pointer-events: none; }
+
+/* ỐNG KÍNH VIGNETTE TRÒN TỰ NHIÊN */
+.screen-vignette { position: relative; overflow: hidden; }
+.screen-vignette::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at center, transparent 45%, rgba(3, 7, 18, 0.45) 80%, rgba(3, 7, 18, 0.85) 100%);
+    pointer-events: none; z-index: 5; opacity: 0; transition: opacity 1.5s ease;
+}
+.screen-vignette.active-vignette::after { opacity: 1; }
+
+/* --- 9. KỸ XẢO BẢNG HỒ SƠ TÂM LÝ --- */
+@keyframes stampDrop {
+    0% { transform: scale(3) rotate(35deg); opacity: 0; }
+    50% { transform: scale(0.9) rotate(10deg); opacity: 1; }
+    70% { transform: scale(1.05) rotate(14deg); }
+    100% { transform: scale(1) rotate(12deg); opacity: 0.85; }
+}
+.rc-stamp-anim { animation: stampDrop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; animation-delay: 0.4s; opacity: 0; }
+
+.radar-point { transition: all 0.3s ease; }
+.radar-point:hover { r: 6; fill: #fff; filter: drop-shadow(0 0 8px #fff); }
+
+@keyframes toastSlideUp {
+    0% { transform: translate3d(-50%, 100%, 0); opacity: 0; }
+    15%, 85% { transform: translate3d(-50%, 0, 0); opacity: 1; }
+    100% { transform: translate3d(-50%, 50%, 0); opacity: 0; }
+}
+.rc-toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translate3d(-50%, 0, 0);
+    z-index: 300; animation: toastSlideUp 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
