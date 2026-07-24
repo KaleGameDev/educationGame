@@ -1,6 +1,6 @@
 // =================================================================
-// HỆ THỐNG ĐIỀU KHIỂN CHÍNH GÓC KHUẤT (V13.5 MASTER ULTIMATE)
-// Khắc phục lỗi BGM chiến thắng | Trừ điểm động | Full 5 Biểu cảm
+// HỆ THỐNG ĐIỀU KHIỂN CHÍNH GÓC KHUẤT (V14.0 - MASTER ULTIMATE)
+// Tích hợp Lệnh Vàng Dọn Dẹp Âm Thanh | Đồng bộ khung thoại 85% | Zero Bug
 // =================================================================
 
 const SAVE_KEY_PREFIX = 'bao_luc_hoc_duong_save_';
@@ -56,6 +56,8 @@ document.addEventListener('keydown', initGlobalAudio, { once: true });
 function playSound(type) { if (window.GameAudio) window.GameAudio.playSound(type); }
 function startBGM(key) { if (window.GameAudio) window.GameAudio.startBGM(key || 'bgm_normal'); }
 function stopBGM() { if (window.GameAudio) window.GameAudio.stopBGM(); }
+function stopAmbient() { if (window.GameAudio && window.GameAudio.stopAmbient) window.GameAudio.stopAmbient(); }
+function stopAllAudio() { if (window.GameAudio && window.GameAudio.stopAll) window.GameAudio.stopAll(); }
 function toggleAudio() { if (window.GameAudio) window.GameAudio.toggleAudio(); }
 
 function createFireflies() {
@@ -116,7 +118,7 @@ function applyScenePresentation(data) {
         };
         charSpriteEl.src = targetSprite;
 
-        charSpriteEl.className = "mt-auto -mb-6 sm:-mb-8 md:-mb-12 max-h-[38vh] sm:max-h-[48vh] md:max-h-[70vh] lg:max-h-[75vh] w-auto max-w-[95%] md:max-w-none object-contain object-bottom mx-auto transition-all duration-500 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] transform-gpu relative z-10 will-change-transform";
+        charSpriteEl.className = "mt-auto -mb-2 sm:-mb-5 md:-mb-10 max-h-[26vh] sm:max-h-[36vh] md:max-h-[68vh] lg:max-h-[72vh] w-auto max-w-[95%] md:max-w-none object-contain object-bottom mx-auto transition-all duration-500 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] transform-gpu relative z-10 animate__animated will-change-transform";
         void charSpriteEl.offsetWidth; 
 
         if (data.charEmotion && ['worried', 'angry', 'cry', 'victory', 'panic', 'rage', 'debate', 'think'].includes(data.charEmotion)) {
@@ -219,7 +221,8 @@ function startRole(role, sceneToLoad) {
     currentPlayingRole = role;
     window.GameStats = { redoCount: 0, minigameWins: 0, minigameTotal: 0 };
     
-    // 👉 ĐẢM BẢO CHẮC CHẮN BẬT LẠI NHẠC HỌC ĐƯỜNG KHI VÀO GAME
+    // 👉 LỆNH VÀNG V14.0: Dập tắt mọi âm thanh môi trường cũ trước khi vào vai
+    stopAmbient();
     startBGM('bgm_normal');
 
     bgOverlay.className = "fixed inset-0 bg-black/80 pointer-events-none transition-colors duration-1000 z-10";
@@ -244,6 +247,9 @@ function resetGame() {
     if (transitionTimer) clearTimeout(transitionTimer); 
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
+    // 👉 LỆNH VÀNG V14.0: Ra menu là phải dọn sạch 100% âm thanh cũ, chống chồng âm iOS
+    stopAllAudio();
+
     bgOverlay.className = "fixed inset-0 bg-black/75 backdrop-blur-[3px] pointer-events-none transition-colors duration-1000 z-10";
     if (resultOverlay) { resultOverlay.classList.add('hidden'); resultOverlay.classList.remove('flex', 'animate__fadeIn'); }
     gameScreen.classList.add('hidden'); gameScreen.classList.remove('flex', 'animate__fadeIn');
@@ -258,7 +264,6 @@ function resetGame() {
     activeMobileCardIndex = 0; updateMobileDots();
 
     startBGM('bgm_normal');
-    if (window.GameAudio && window.GameAudio.stopAmbient) window.GameAudio.stopAmbient();
 }
 
 function loadScene(sceneId) {
@@ -266,13 +271,18 @@ function loadScene(sceneId) {
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     if (resultOverlay) { resultOverlay.classList.add('hidden'); resultOverlay.classList.remove('flex', 'animate__fadeIn'); }
 
+    // 👉 LỆNH VÀNG V14.0: Bắt buộc ngắt tiếng đồng hồ/nhịp tim của màn cũ ngay khi sang cảnh mới!
+    stopAmbient();
+
     if (sceneId === 'RESET_GAME') {
         localStorage.removeItem(SAVE_KEY_PREFIX + currentPlayingRole);
         if (window.ReportCardEngine && window.ReportCardEngine.showReportCard) {
             window.ReportCardEngine.showReportCard(
                 currentPlayingRole,
                 () => { 
-                    startBGM('bgm_normal'); // 👉 Ép tắt nhạc chiến thắng khi chọn chơi lại tuyến này
+                    // 👉 LỆNH VÀNG V14.0: Ngắt nhạc chiến thắng và dọn dẹp âm thanh khi bấm "Chơi lại tuyến này"
+                    stopAllAudio();
+                    startBGM('bgm_normal'); 
                     startRole(currentPlayingRole, currentPlayingRole + '_man_1'); 
                 },
                 () => { resetGame(); }
@@ -290,8 +300,9 @@ function loadScene(sceneId) {
         localStorage.setItem(SAVE_KEY_PREFIX + currentPlayingRole, sceneId);
     }
 
+    // 👉 ĐỒNG BỘ KHUNG THOẠI 85% TRÊN MOBILE: Ngăn JS viết đè làm thu nhỏ hộp thoại
     if (dialogueContainer) {
-        dialogueContainer.className = `absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[58%] sm:h-[65%] md:h-full p-4 sm:p-5 md:p-8 pb-5 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto ${data.bgTheme}`;
+        dialogueContainer.className = `absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[85%] sm:h-[78%] md:h-full p-3 sm:p-5 md:p-8 pb-4 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto ${data.bgTheme}`;
     }
     
     if (data.bgImage) { container.style.backgroundImage = `url('${data.bgImage}')`; }
@@ -300,7 +311,7 @@ function loadScene(sceneId) {
     if (window.GameAudio) window.GameAudio.setBgmByContext(data);
     if (data.sfx && window.GameAudio) window.GameAudio.playSfx(data.sfx);
 
-    charNameEl.className = `font-black text-[16px] sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md ${data.charColor}`;
+    charNameEl.className = `font-black text-[15px] sm:text-xl md:text-2xl pb-1.5 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md ${data.charColor}`;
     charNameEl.innerText = data.charName;
 
     if (data.isResult) {
@@ -357,13 +368,13 @@ function loadScene(sceneId) {
 
         if (choice.isUndo) {
             let cleanText = choice.text.replace(/^[↺↩]\s*/, '');
-            btn.className += " relative overflow-hidden w-full bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-4 sm:p-5 rounded-xl sm:rounded-2xl transition-all duration-300 shadow-[0_10px_25px_rgba(245,158,11,0.3)] active:scale-[0.98] text-[15px] sm:text-lg md:text-xl flex items-center justify-center gap-2.5 group shrink-0 transform-gpu border border-yellow-400/40";
+            btn.className += " relative overflow-hidden w-full bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-3.5 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-300 shadow-[0_10px_25px_rgba(245,158,11,0.3)] active:scale-[0.98] text-[14px] sm:text-lg md:text-xl flex items-center justify-center gap-2 group shrink-0 transform-gpu border border-yellow-400/40";
             btn.innerHTML = `
                 <svg class="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:-rotate-45 transition-transform duration-300 shrink-0 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                 <span class="drop-shadow-sm relative z-10">${cleanText}</span>
             `;
         } else {
-            btn.className += " relative overflow-hidden w-full text-left bg-slate-800/80 backdrop-blur-md hover:bg-slate-700 border border-slate-600/50 hover:border-slate-400 text-slate-100 p-3.5 sm:p-4 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.2)] active:scale-[0.98] text-[14px] sm:text-base md:text-lg font-medium flex items-center justify-between group leading-snug shrink-0 transform-gpu";
+            btn.className += " relative overflow-hidden w-full text-left bg-slate-800/80 backdrop-blur-md hover:bg-slate-700 border border-slate-600/50 hover:border-slate-400 text-slate-100 p-3 sm:p-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.2)] active:scale-[0.98] text-[13.5px] sm:text-base md:text-lg font-medium flex items-center justify-between group leading-snug shrink-0 transform-gpu";
             btn.innerHTML = `<span class="pr-3 drop-shadow-md relative z-10">${choice.text}</span><svg class="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 shrink-0 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
         }
         
@@ -448,13 +459,13 @@ function showResultOverlay(data) {
         const btn = document.createElement('button');
         if (choice.isUndo) {
             let cleanText = choice.text.replace(/^[↺↩]\s*/, '');
-            btn.className = "w-full bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-4 sm:p-5 rounded-xl sm:rounded-2xl transition-all duration-200 shadow-[0_10px_25px_rgba(245,158,11,0.3)] active:scale-[0.98] text-[15px] sm:text-lg md:text-xl flex items-center justify-center gap-2.5 group border border-yellow-400/40 transform-gpu";
+            btn.className = "w-full bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black p-3.5 sm:p-5 rounded-xl sm:rounded-2xl transition-all duration-200 shadow-[0_10px_25px_rgba(245,158,11,0.3)] active:scale-[0.98] text-[14.5px] sm:text-lg md:text-xl flex items-center justify-center gap-2 group border border-yellow-400/40 transform-gpu";
             btn.innerHTML = `
                 <svg class="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:-rotate-45 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                 <span class="drop-shadow-sm">${cleanText}</span>
             `;
         } else {
-            btn.className = "w-full text-center bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black p-3.5 sm:p-5 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(16,185,129,0.3)] active:scale-[0.98] text-[14px] sm:text-lg md:text-xl flex items-center justify-center gap-2 group border border-emerald-400/30 transform-gpu";
+            btn.className = "w-full text-center bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white font-black p-3 sm:p-5 rounded-xl sm:rounded-2xl transition-colors duration-200 shadow-[0_10px_25px_rgba(16,185,129,0.3)] active:scale-[0.98] text-[13.5px] sm:text-lg md:text-xl flex items-center justify-center gap-2 group border border-emerald-400/30 transform-gpu";
             btn.innerHTML = `<span class="drop-shadow-sm">${choice.text}</span><svg class="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:translate-x-2 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>`;
         }
         btn.onclick = () => {
