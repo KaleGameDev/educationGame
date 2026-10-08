@@ -201,7 +201,7 @@ const DATA_MAI = {
         charEmotion: "worried",
         sfx: "sfx_heartbeat",
         bgTheme: "border-emerald-500/30 bg-slate-900/95",
-        story: "Giờ tan học tại nhà để xe tối tăm, một chị đại khối 12 tên Vy chặn xe Mai. Vy nắm cổ áo Mai đe dọa: 'Mai mang 500k nộp quỹ bảo kê, không thì đừng hòng dắt xe ra khỏi trường. Méc ai tao rạch mặt'.",
+        story: "Giờ tan học tại nhà để xe tối tăm, một chị đại khối 9 tên Vy chặn xe Mai. Vy nắm cổ áo Mai đe dọa: 'Mai mang 500k nộp quỹ bảo kê, không thì đừng hòng dắt xe ra khỏi trường. Méc ai tao rạch mặt'.",
         choices: [
             { text: "👉 Vứt xe chạy ngược lên phòng Giám thị kêu cứu.", nextScene: "mai_2_sai_a" },
             { text: "👉 Rút điện thoại ra quay phim thẳng mặt Vy để đe dọa lại.", nextScene: "mai_2_sai_b" },

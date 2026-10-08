@@ -12,7 +12,7 @@ const DATA_MINH = {
         charSprite: "assets/characters/Char_4.webp",
         charEmotion: "worried",
         bgTheme: "border-indigo-500/30 bg-slate-900/95",
-        story: "Giờ ra chơi, Minh và các bạn đang ném bóng rổ thì nhóm của Long 'đại ca' khối 12 đi tới. Long giật quả bóng trên tay Minh ném ra xa, hất hàm: 'Sân này giờ của bọn tao. Mấy thằng oắt con biến ra chỗ khác chơi'.",
+        story: "Giờ ra chơi, Minh và các bạn đang ném bóng rổ thì nhóm của Long 'đại ca' khối 9 đi tới. Long giật quả bóng trên tay Minh ném ra xa, hất hàm: 'Sân này giờ của bọn tao. Mấy thằng oắt con biến ra chỗ khác chơi'.",
         choices: [
             { text: "👉 Cay máu lao vào đẩy Long: 'Sân trường chung, anh cậy lớn ức hiếp ai?'.", nextScene: "minh_1_sai_a" },
             { text: "👉 Sợ hãi cúi gầm mặt, bảo bạn bè nhường sân rồi cay đắng bỏ đi.", nextScene: "minh_1_sai_b" },
@@ -1269,7 +1269,7 @@ const DATA_MINH = {
         charSprite: "assets/characters/Char_4.webp",
         charEmotion: "normal",
         bgTheme: "border-indigo-500/30 bg-slate-900/95",
-        story: "Hiệu trưởng nhận ra sự bất thường, lập tức nhấc điện thoại gọi Công an phường. Bảo hoảng loạn tột độ, khuỵu gối xuống khóc lóc: 'Thầy ơi tha cho em, là anh Long khối 12 ép em nhét vào cặp Minh để đuổi học nó, em xin lỗi!'.",
+        story: "Hiệu trưởng nhận ra sự bất thường, lập tức nhấc điện thoại gọi Công an phường. Bảo hoảng loạn tột độ, khuỵu gối xuống khóc lóc: 'Thầy ơi tha cho em, là anh Long khối 9 ép em nhét vào cặp Minh để đuổi học nó, em xin lỗi!'.",
         choices: [
             { text: "👉 Chửi bới: 'Tao không tha, tao sẽ kiện cho mày đi tù mọt gông!'.", nextScene: "minh_7_3_sai_a" },
             { text: "👉 Mủi lòng: 'Thôi thầy tha cho bạn ấy, chắc bị ép thật'.", nextScene: "minh_7_3_sai_b" },
