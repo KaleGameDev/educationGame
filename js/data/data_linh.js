@@ -859,7 +859,7 @@ const DATA_LINH = {
         charSprite: "assets/characters/Char_2.webp",
         charEmotion: "think", // 👉 Tư duy dũng cảm khai sự thật với giáo viên
         bgTheme: "border-sky-500/30 bg-slate-900/95",
-        story: "Linh an toàn về nhà. Hôm sau, Cô giáo gọi riêng Linh lên phòng: 'Linh, cô nghe nói hôm trước em có ở góc nhà xe. Em có thấy Hùng đe dọa đòi tiền em Tuấn lớp 10 không?'.",
+        story: "Linh an toàn về nhà. Hôm sau, Cô giáo gọi riêng Linh lên phòng: 'Linh, cô nghe nói hôm trước em có ở góc nhà xe. Em có thấy Hùng đe dọa đòi tiền em Tuấn lớp dưới không?'.",
         choices: [
             { text: "👉 Sợ vụ ghép ảnh 18+ nên nói dối: 'Dạ lúc đó em đi nhanh quá em không nhìn rõ gì đâu cô'.", nextScene: "linh_5_2_sai_a" },
             { text: "👉 Từ chối trả lời: 'Cô đừng hỏi em, em không muốn liên quan đâu ạ'.", nextScene: "linh_5_2_sai_b" },

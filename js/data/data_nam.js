@@ -94,7 +94,7 @@ const DATA_NAM = {
         charEmotion: "think", // 👉 Dùng sự tỉnh táo và tập trung để quay lén bằng chứng
         sfx: "sfx_heartbeat",
         bgTheme: "border-amber-500/30 bg-slate-900/95",
-        story: "Cậu bé lớp 10 bám lấy áo bạn khóc nấc, kể rằng đã bị tống tiền suốt 1 tháng nay. Hùng đứng ngoài cửa nhặt một cục gạch nhỏ ném mạnh về phía chân bạn, gằn giọng: 'Mày muốn bao đồng hả thằng ranh? Cẩn thận cái mạng mày đấy'.",
+        story: "Cậu bé lớp 7 bám lấy áo bạn khóc nấc, kể rằng đã bị tống tiền suốt 1 tháng nay. Hùng đứng ngoài cửa nhặt một cục gạch nhỏ ném mạnh về phía chân bạn, gằn giọng: 'Mày muốn bao đồng hả thằng ranh? Cẩn thận cái mạng mày đấy'.",
         
         minigame: {
             type: "stealth",
@@ -159,7 +159,7 @@ const DATA_NAM = {
         resultTitle: "THÀNH CÔNG - SỰ CAN THIỆP THÔNG MINH",
         resultColor: "text-emerald-400",
         illustration: "assets/scenes/Char_3_Scene_2.webp",
-        story: "Đoạn ghi âm rõ ràng đã khiến Hùng hết đường chối cãi. Hồ sơ bị chuyển sang công an phường vì hành vi tống tiền. Cậu bé lớp 10 vẫn cần thời gian dài để vượt qua ám ảnh tâm lý, nhưng em ấy biết rằng ở trường vẫn còn những người bảo vệ lẽ phải như bạn.",
+        story: "Đoạn ghi âm rõ ràng đã khiến Hùng hết đường chối cãi. Hồ sơ bị chuyển sang công an phường vì hành vi tống tiền. Cậu bé lớp 7 vẫn cần thời gian dài để vượt qua ám ảnh tâm lý, nhưng em ấy biết rằng ở trường vẫn còn những người bảo vệ lẽ phải như bạn.",
         choices: [{ text: "➔ Chuyển sang Màn 2: Hội Anh Em", nextScene: "nam_man_2" }]
     },
 
@@ -387,7 +387,7 @@ const DATA_NAM = {
         charSprite: "assets/characters/Char_3.webp",
         charEmotion: "think", // 👉 Tư duy đồng hành bảo vệ bạn thân bị trấn lột
         bgTheme: "border-amber-500/30 bg-slate-900/95",
-        story: "Mua nước ở căng tin, Nam bắt gặp người bạn thân tên Tuấn đang lén lút đưa tờ 200 ngàn cho một đàn anh lớp 12. Ánh mắt Tuấn đầy sợ hãi. Lát sau, Tuấn thú nhận bị nhóm này ép nộp 'phí bảo kê' mỗi tuần, nếu không sẽ bị chặn đánh.",
+        story: "Mua nước ở căng tin, Nam bắt gặp người bạn thân tên Tuấn đang lén lút đưa tờ 200 ngàn cho một đàn anh lớp 9. Ánh mắt Tuấn đầy sợ hãi. Lát sau, Tuấn thú nhận bị nhóm này ép nộp 'phí bảo kê' mỗi tuần, nếu không sẽ bị chặn đánh.",
         choices: [
             { text: "👉 Trách móc: 'Trời ơi đàn ông con trai sao mày hèn vậy? Cứ đưa tiền nó làm gì?'.", nextScene: "nam_4_sai_a" },
             { text: "👉 Thương bạn, đưa cho Tuấn mượn thêm tiền để nộp cho qua chuyện tuần này.", nextScene: "nam_4_sai_b" },
@@ -628,7 +628,7 @@ const DATA_NAM = {
         charSprite: "assets/characters/Char_3.webp",
         charEmotion: "think", // 👉 Lý trí yêu cầu hội ý theo đúng luật thể thao
         bgTheme: "border-amber-500/30 bg-slate-900/95",
-        story: "Trận chung kết bóng đá liên lớp. Đội đối thủ vì muốn thắng đã chơi xấu, liên tục tung những cú tắc bóng triệt hạ vào ống đồng của Minh (đồng đội Nam). Trọng tài là một học sinh lớp 12 lại cố tình ngó lơ.",
+        story: "Trận chung kết bóng đá liên lớp. Đội đối thủ vì muốn thắng đã chơi xấu, liên tục tung những cú tắc bóng triệt hạ vào ống đồng của Minh (đồng đội Nam). Trọng tài là một học sinh lớp 8 lại cố tình ngó lơ.",
         choices: [
             { text: "👉 Ăn miếng trả miếng, canh me lúc trọng tài không nhìn để đạp gãy chân cầu thủ đội bạn.", nextScene: "nam_6_sai_a" },
             { text: "👉 Bức xúc lôi cả đội bỏ về, từ chối thi đấu trận bóng rác rưởi này.", nextScene: "nam_6_sai_b" },
