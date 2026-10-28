@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GÓC KHUẤT - Phiên Bản Test</title>
+    <!-- 👉 Favicon Khiên bảo vệ xóa sạch lỗi 404 Console: -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-black text-white font-sans select-none overflow-hidden h-[100dvh] w-full relative overscroll-none touch-pan-y">
+
+    <div id="cinematic-flash" class="fixed inset-0 bg-white z-[200] pointer-events-none opacity-0 transition-opacity duration-200 mix-blend-overlay"></div>
+
+    <div class="fixed -inset-10 z-0 overflow-hidden bg-black">
+        <div id="game-bg" class="w-full h-full bg-cover bg-center transition-all duration-1000 bg-ambient" style="background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1932&auto=format&fit=crop');"></div>
+    </div>
+    
+    <div class="fixed inset-0 bg-black/75 backdrop-blur-[3px] pointer-events-none transition-all duration-1000 z-10" id="bg-overlay"></div>
+
+    <div class="h-full w-full flex flex-col justify-between p-0 md:p-6 lg:p-8 relative z-20">
+        
+        <!-- HEADER -->
+        <header id="main-header" class="hidden py-3 pl-4 pr-16 md:px-0 flex-row justify-between items-center shrink-0 w-full max-w-7xl mx-auto gap-2">
+            <div class="flex-1 min-w-0">
+                <h1 id="top-nav-title" class="text-[14px] sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-colors duration-300">
+                    CHỌN NHÂN VẬT
+                </h1>
+                <p id="top-nav-sub" class="text-[10px] sm:text-xs md:text-sm text-slate-300 font-medium truncate drop-shadow transition-colors duration-300">
+                    Giáo dục về vấn nạn bạo lực học đường
+                </p>
+            </div>
+            
+            <button id="btn-reset-role" onclick="showConfirmModal()" class="hidden bg-slate-900/90 hover:bg-slate-800 text-white px-3 py-2 rounded-xl text-[11px] sm:text-xs md:text-sm font-bold transition-transform duration-200 border border-slate-600 shadow-[0_4px_15px_rgba(0,0,0,0.5)] items-center gap-1.5 shrink-0 active:scale-95 transform-gpu">
+                <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <span class="hidden sm:inline">Chọn lại vai</span>
+            </button>
+        </header>
+
+        <main class="flex-1 min-h-0 flex items-center justify-center w-full max-w-7xl mx-auto my-0 sm:my-2">
+            
+            <!-- MENU CHÍNH -->
+            <div id="main-menu-screen" class="w-full h-full flex flex-col items-center justify-center animate__animated animate__fadeIn relative overflow-hidden rounded-3xl p-4">
+                <div id="fireflies-container" class="absolute inset-0 z-0 pointer-events-none"></div>
+
+                <div class="text-center mb-10 sm:mb-14 relative z-10">
+                    <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-[100px] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-[#fde68a] via-[#d97706] to-[#78350f] drop-shadow-[0_8px_8px_rgba(0,0,0,0.9)] uppercase mb-4 sm:mb-6 leading-tight sm:leading-none py-2 animate__animated animate__zoomIn transform-gpu">
+                        GÓC<br/>KHUẤT
+                    </h1>
+                    <p class="text-sm sm:text-base md:text-lg lg:text-xl text-[#fef3c7] font-medium max-w-2xl mx-auto px-4 drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)] opacity-90 animate__animated animate__fadeInUp animate__delay-1s transform-gpu">
+                        Dự án game tương tác hỗ trợ giáo dục nhận thức của học sinh về vấn nạn bạo lực học đường.
+                    </p>
+                </div>
+
+                <!-- Cập nhật khu vực nhập liệu -->
+                <div class="flex flex-col items-center gap-4 relative z-10 animate__animated animate__fadeInUp animate__delay-1s w-full max-w-sm mx-auto">
+                    <input type="text" id="room-code-input" placeholder="Mã Phòng (VD: 12345)" 
+                        class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-[#b45309] text-[#fef3c7] font-bold text-center text-xl placeholder-slate-400 focus:outline-none focus:border-[#fcd34d] shadow-[0_0_15px_rgba(180,83,9,0.5)] tracking-widest uppercase">
+                    
+                    <input type="text" id="student-name-input" placeholder="Nhập Họ Tên - Lớp (VD: Hùng 10A1)" 
+                        class="w-full px-5 py-4 rounded-xl bg-black/60 border-2 border-[#b45309] text-[#fef3c7] font-bold text-center text-lg placeholder-slate-400 focus:outline-none focus:border-[#fcd34d] shadow-[0_0_15px_rgba(180,83,9,0.5)]">
+                    
+                    <button onclick="startTestSession()" class="group w-full relative px-10 py-4 bg-gradient-to-b from-[#92400e] to-[#451a03] border-2 border-[#b45309] rounded-xl font-black text-xl text-[#fef3c7] shadow-[0_15px_30px_rgba(0,0,0,0.8)] transform hover:-translate-y-1 transition-transform duration-300 overflow-hidden active:scale-95 flex items-center justify-center gap-3 transform-gpu">
+                        <div class="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
+                        <svg class="w-6 h-6 fill-current text-[#fcd34d] group-hover:text-white transition-colors animate-pulse" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <span class="tracking-widest drop-shadow-md">VÀO GAME</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MÀN HÌNH CHỌN VAI -->
+            <div id="role-selection-screen" class="hidden w-full h-full max-w-7xl flex-col justify-center animate__animated p-2 md:p-0">
+                <div class="flex-1 min-h-0 flex items-center justify-center relative w-full px-0">
+                    <button onclick="switchMobileCard(-1)" class="sm:hidden absolute left-0 z-30 bg-slate-800/90 text-white p-3 rounded-full border border-slate-600 shadow-[0_0_15px_rgba(0,0,0,0.5)] active:scale-90 transition-transform transform-gpu">
+                        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+
+                    <div class="w-full max-w-[320px] h-[65vh] min-h-[440px] max-h-[580px] sm:max-w-2xl lg:max-w-none sm:h-full sm:min-h-0 sm:max-h-none mx-auto flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 items-stretch justify-center pt-8 sm:pt-16 pb-2">
+                        
+                        <!-- Thẻ Mai -->
+                        <div id="card-mai" onclick="checkSaveAndStart('mai')" class="role-card flex flex-1 bg-slate-900/95 border border-slate-700/50 hover:border-emerald-500/60 rounded-[24px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu">
+                            <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-emerald-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-emerald-500/40 transition-all duration-700"></div>
+                            <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-emerald-950/60 to-transparent border-b border-slate-800 rounded-t-[24px] sm:rounded-t-[28px]">
+                                <img src="assets/characters/Char_1.webp" alt="Mai" class="absolute bottom-0 h-[115%] sm:h-[120%] lg:h-[110%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)] transform group-hover:scale-105 transition-transform duration-500 z-10 transform-gpu">
+                            </div>
+                            <div class="p-4 sm:p-5 flex flex-col justify-between relative z-20 bg-slate-950 shrink-0 rounded-b-[24px] sm:rounded-b-[28px]">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="bg-emerald-500/10 text-emerald-400 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Nữ • Nạn nhân</span>
+                                        <span class="text-[10px] text-slate-500 font-medium uppercase tracking-widest">Chịu đựng</span>
+                                    </div>
+                                    <h2 class="text-xl sm:text-2xl font-black text-slate-100 group-hover:text-emerald-400 transition-colors tracking-tight drop-shadow-md">MAI</h2>
+                                    <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn đang hứng chịu tin đồn thất thiệt và sự cô lập từ bạn bè...</p>
+                                </div>
+                                <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-emerald-600 border border-slate-700/50 group-hover:border-emerald-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    NHẬP VAI
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thẻ Minh -->
+                        <div id="card-minh" onclick="checkSaveAndStart('minh')" class="role-card hidden sm:flex flex-1 bg-slate-900/95 border border-slate-700/50 hover:border-indigo-500/60 rounded-[24px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu">
+                            <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-indigo-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-indigo-500/40 transition-all duration-700"></div>
+                            <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-indigo-950/60 to-transparent border-b border-slate-800 rounded-t-[24px] sm:rounded-t-[28px]">
+                                <img src="assets/characters/Char_4.webp" alt="Minh" class="absolute bottom-0 h-[115%] sm:h-[120%] lg:h-[110%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)] transform group-hover:scale-105 transition-transform duration-500 z-10 transform-gpu">
+                            </div>
+                            <div class="p-4 sm:p-5 flex flex-col justify-between relative z-20 bg-slate-950 shrink-0 rounded-b-[24px] sm:rounded-b-[28px]">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="bg-indigo-500/10 text-indigo-400 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Nam • Nạn nhân</span>
+                                        <span class="text-[10px] text-slate-500 font-medium uppercase tracking-widest">Phản kháng</span>
+                                    </div>
+                                    <h2 class="text-xl sm:text-2xl font-black text-slate-100 group-hover:text-indigo-400 transition-colors tracking-tight drop-shadow-md">MINH</h2>
+                                    <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn đối mặt với bạo lực sân bóng, trấn lột và sự miệt thị yếu đuối...</p>
+                                </div>
+                                <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-indigo-600 border border-slate-700/50 group-hover:border-indigo-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    NHẬP VAI
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thẻ Linh -->
+                        <div id="card-linh" onclick="checkSaveAndStart('linh')" class="role-card hidden sm:flex flex-1 bg-slate-900/95 border border-slate-700/50 hover:border-sky-500/60 rounded-[24px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu">
+                            <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-sky-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-sky-500/40 transition-all duration-700"></div>
+                            <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-sky-950/60 to-transparent border-b border-slate-800 rounded-t-[24px] sm:rounded-t-[28px]">
+                                <img src="assets/characters/Char_2.webp" alt="Linh" class="absolute bottom-0 h-[115%] sm:h-[120%] lg:h-[110%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)] transform group-hover:scale-105 transition-transform duration-500 z-10 transform-gpu">
+                            </div>
+                            <div class="p-4 sm:p-5 flex flex-col justify-between relative z-20 bg-slate-950 shrink-0 rounded-b-[24px] sm:rounded-b-[28px]">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="bg-sky-500/10 text-sky-400 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Nữ • Chứng kiến</span>
+                                        <span class="text-[10px] text-slate-500 font-medium uppercase tracking-widest">Tâm lý</span>
+                                    </div>
+                                    <h2 class="text-xl sm:text-2xl font-black text-slate-100 group-hover:text-sky-400 transition-colors tracking-tight drop-shadow-md">LINH</h2>
+                                    <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn vô tình chứng kiến bạo lực mạng và áp lực độc hại từ bạn bè...</p>
+                                </div>
+                                <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-sky-600 border border-slate-700/50 group-hover:border-sky-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    NHẬP VAI
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thẻ Nam -->
+                        <div id="card-nam" onclick="checkSaveAndStart('nam')" class="role-card hidden sm:flex flex-1 bg-slate-900/95 border border-slate-700/50 hover:border-amber-500/60 rounded-[24px] sm:rounded-[28px] cursor-pointer transform lg:hover:-translate-y-2 transition-transform duration-300 flex-col justify-between shadow-xl hover:shadow-2xl group overflow-visible relative w-full h-full transform-gpu">
+                            <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-amber-500/20 rounded-full blur-[60px] pointer-events-none group-hover:bg-amber-500/40 transition-all duration-700"></div>
+                            <div class="flex-1 min-h-0 w-full flex items-end justify-center relative z-10 overflow-visible bg-gradient-to-t from-amber-950/60 to-transparent border-b border-slate-800 rounded-t-[24px] sm:rounded-t-[28px]">
+                                <img src="assets/characters/Char_3.webp" alt="Nam" class="absolute bottom-0 h-[115%] sm:h-[120%] lg:h-[110%] w-auto max-w-none object-contain origin-bottom drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)] transform group-hover:scale-105 transition-transform duration-500 z-10 transform-gpu">
+                            </div>
+                            <div class="p-4 sm:p-5 flex flex-col justify-between relative z-20 bg-slate-950 shrink-0 rounded-b-[24px] sm:rounded-b-[28px]">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="bg-amber-500/10 text-amber-400 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Nam • Chứng kiến</span>
+                                        <span class="text-[10px] text-slate-500 font-medium uppercase tracking-widest">Can thiệp</span>
+                                    </div>
+                                    <h2 class="text-xl sm:text-2xl font-black text-slate-100 group-hover:text-amber-400 transition-colors tracking-tight drop-shadow-md">NAM</h2>
+                                    <p class="text-slate-300 mt-1 sm:mt-1.5 text-[11px] sm:text-sm leading-relaxed line-clamp-2">Bạn chứng kiến cảnh hành hung trong nhà vệ sinh và áp lực hội anh lớn...</p>
+                                </div>
+                                <div class="mt-3 text-center bg-slate-800/80 group-hover:bg-amber-600 border border-slate-700/50 group-hover:border-amber-500 text-slate-200 group-hover:text-white font-bold py-2.5 rounded-[12px] shadow transition-colors duration-300 text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    NHẬP VAI
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button onclick="switchMobileCard(1)" class="sm:hidden absolute right-0 z-30 bg-slate-800/90 text-white p-3 rounded-full border border-slate-600 shadow-[0_0_15px_rgba(0,0,0,0.5)] active:scale-90 transition-transform transform-gpu">
+                        <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+
+                <div class="flex sm:hidden items-center justify-center gap-2 mt-2 shrink-0">
+                    <span id="dot-0" class="w-6 h-1.5 bg-emerald-500 rounded-full transition-colors duration-300 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+                    <span id="dot-1" class="w-1.5 h-1.5 bg-white/20 rounded-full transition-colors duration-300"></span>
+                    <span id="dot-2" class="w-1.5 h-1.5 bg-white/20 rounded-full transition-colors duration-300"></span>
+                    <span id="dot-3" class="w-1.5 h-1.5 bg-white/20 rounded-full transition-colors duration-300"></span>
+                </div>
+            </div>
+
+            <!-- MÀN HÌNH GAMEPLAY TƯƠNG TÁC -->
+            <div id="gameplay-screen" class="hidden w-full h-full shrink-0 flex-col md:flex-row items-stretch transition-opacity duration-300 min-h-0 relative mt-0">
+                
+                <!-- KHU VỰC NHÂN VẬT -->
+                <div class="absolute md:relative top-0 left-0 w-full md:w-5/12 lg:w-1/2 h-[15%] sm:h-[22%] md:h-full flex items-end justify-center pointer-events-none z-10 overflow-visible">
+                    <div class="absolute bottom-[5%] md:bottom-10 left-1/2 -translate-x-1/2 w-36 h-36 md:w-96 md:h-96 bg-white/5 rounded-full blur-3xl pointer-events-none z-0"></div>
+                    
+                    <div class="absolute bottom-[0%] md:bottom-0 left-1/2 -translate-x-1/2 w-32 sm:w-64 h-4 sm:h-10 bg-black/80 rounded-[100%] blur-md pointer-events-none z-0 char-shadow transform-gpu"></div>
+
+                    <div class="char-breathe absolute bottom-[0%] md:bottom-0 z-10 w-full h-full flex justify-center items-end pointer-events-none">
+                        <img id="char-sprite-img" src="" alt="Character Sprite" class="mt-auto -mb-2 sm:-mb-5 md:-mb-10 max-h-[26vh] sm:max-h-[36vh] md:max-h-[68vh] lg:max-h-[72vh] w-auto max-w-[95%] md:max-w-none object-contain object-bottom mx-auto transition-all duration-500 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] transform-gpu relative z-10 animate__animated will-change-transform">
+                    </div>
+                </div>
+
+                <!-- KHU VỰC HỘP THOẠI -->
+                <div id="dialogue-container" class="absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[85%] sm:h-[78%] md:h-full p-3 sm:p-5 md:p-8 pb-4 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto">
+                    
+                    <div id="char-name" class="font-black text-[15px] sm:text-xl md:text-2xl pb-1.5 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md"></div>
+                    
+                    <div id="text-scroll-box" class="shrink-0 max-h-[40%] overflow-y-auto pr-1 my-1.5 sm:my-2.5 custom-scrollbar">
+                        <p id="story-text" class="text-[14px] sm:text-lg md:text-xl text-slate-100 leading-relaxed font-medium drop-shadow-sm pb-1"></p>
+                    </div>
+                    
+                    <div class="border-t border-slate-800/60 my-0.5 shrink-0"></div>
+
+                    <div id="choices-scroll-box" class="flex-1 min-h-0 overflow-y-auto pr-1 pt-1.5 custom-scrollbar pb-1">
+                        <div id="choices-box" class="flex flex-col gap-2 sm:gap-2.5 pb-1"></div>
+                    </div>
+                </div>
+            </div>  
+
+        </main>
+        
+        <footer class="hidden md:block relative z-20 text-center text-[10px] sm:text-xs text-slate-400 font-medium py-1 sm:py-2 border-t border-white/5 shrink-0 bg-black/40 backdrop-blur-sm">
+            Thiết kế tối ưu cho máy chiếu lớp học & thiết bị di động
+        </footer>
+    </div>
+
+    <!-- CÁC MODAL HỆ THỐNG -->
+    <div id="result-overlay" class="hidden fixed inset-0 z-[100] w-screen h-[100dvh] bg-slate-950/95 backdrop-blur-2xl flex-col justify-between overflow-y-auto custom-scrollbar animate__animated transition-opacity duration-500 select-none">
+        <div class="w-full px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center relative z-10 border-b border-white/10 bg-black/40 shrink-0">
+            <div id="result-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-sm font-extrabold uppercase tracking-widest border"></div>
+            <span class="text-xs text-slate-400 hidden sm:inline font-medium">Bạo lực học đường • Phân tích hệ quả</span>
+        </div>
+        <div class="flex-1 min-h-0 w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center p-4 sm:p-8 md:p-12 gap-5 lg:gap-16 relative z-10 my-auto pb-10">
+            <div class="w-full lg:w-1/2 h-52 sm:h-80 lg:h-[65vh] max-h-[600px] flex items-center justify-center relative group shrink-0">
+                <div class="w-full h-full rounded-[24px] sm:rounded-3xl overflow-hidden border border-white/15 shadow-[0_0_40px_rgba(0,0,0,0.8)] relative bg-slate-900/90 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 pointer-events-none"></div>
+                    <img id="result-img" src="" alt="Minh họa hệ quả" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 transform-gpu">
+                </div>
+            </div>
+            <div class="w-full lg:w-1/2 flex flex-col justify-center text-left max-w-2xl mt-2 sm:mt-0">
+                <h2 id="result-title" class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.9)] mb-3 animate__animated animate__fadeInUp"></h2>
+                <div class="bg-slate-900/80 p-4 sm:p-6 md:p-8 rounded-[20px] sm:rounded-3xl border border-slate-700 mb-4 shadow-[0_10px_30px_rgba(0,0,0,0.8)] animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2"><span>💡 Góc nhìn tâm lý & Bài học</span></div>
+                    <p id="result-desc" class="text-[14px] sm:text-base md:text-lg text-white leading-relaxed font-medium drop-shadow-sm"></p>
+                </div>
+                <div id="result-choices-box" class="w-full animate__animated animate__fadeInUp animate__delay-1s"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="save-modal" class="hidden fixed inset-0 z-[150] w-screen h-[100dvh] bg-slate-950/90 backdrop-blur-sm flex-col items-center justify-center animate__animated select-none p-4">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-[32px] p-6 sm:p-8 max-w-sm sm:max-w-md w-full shadow-[0_20px_50px_rgba(0,0,0,0.7)] transform transition-transform flex flex-col items-center text-center animate__animated animate__zoomIn animate__faster transform-gpu relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none"></div>
+            <div class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-4 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)] relative z-10">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-black text-white mb-2 relative z-10">Tìm thấy điểm lưu!</h3>
+            <p id="save-modal-text" class="text-[14px] sm:text-base text-slate-300 mb-6 leading-relaxed relative z-10"></p>
+            <div class="flex flex-col w-full gap-3 relative z-10">
+                <button id="btn-resume-save" class="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors shadow-[0_4px_15px_rgba(16,185,129,0.3)] active:scale-95 text-[14px] sm:text-base transform-gpu">Tiếp tục chơi</button>
+                <button id="btn-restart-save" class="w-full py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-bold transition-colors active:scale-95 text-[14px] sm:text-base transform-gpu">Chơi lại từ đầu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirm-reset-modal" class="hidden fixed inset-0 z-[150] w-screen h-[100dvh] bg-slate-950/90 backdrop-blur-sm flex-col items-center justify-center animate__animated select-none p-4">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-[32px] p-6 sm:p-8 max-w-sm sm:max-w-md w-full shadow-[0_20px_50px_rgba(0,0,0,0.7)] transform transition-transform flex flex-col items-center text-center animate__animated animate__zoomIn animate__faster transform-gpu relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-b from-amber-500/10 to-transparent pointer-events-none"></div>
+            <div class="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mb-4 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)] relative z-10">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-black text-white mb-2 relative z-10">Đổi vai trò khác?</h3>
+            <p class="text-[14px] sm:text-base text-slate-300 mb-6 leading-relaxed relative z-10">Tiến độ của nhân vật này đã được lưu tự động. Bạn có thể quay lại chơi tiếp bất cứ lúc nào.</p>
+            <div class="flex w-full gap-3 relative z-10">
+                <button onclick="closeConfirmModal()" class="flex-1 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold transition-colors active:scale-95 text-[14px] sm:text-base transform-gpu">Ở lại</button>
+                <button onclick="resetGame()" class="flex-1 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-black transition-colors shadow-[0_4px_15px_rgba(245,158,11,0.3)] active:scale-95 text-[14px] sm:text-base transform-gpu">Ra Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NÚT ÂM THANH -->
+    <button id="btn-audio-toggle" onclick="toggleAudio()" class="fixed top-3 right-3 md:bottom-6 md:right-6 md:top-auto z-[200] bg-slate-900/90 hover:bg-slate-800 text-amber-400 hover:text-amber-200 p-2.5 md:p-3.5 rounded-full border border-slate-700 shadow-[0_0_15px_rgba(0,0,0,0.5)] transition-transform duration-300 active:scale-90 transform-gpu">
+        <svg id="icon-vol-on" class="w-4 h-4 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 011-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+        <svg id="icon-vol-off" class="w-4 h-4 sm:w-6 sm:h-6 hidden text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+    </button>
+
+    <div id="minigame-overlay" class="hidden fixed inset-0 z-[180] w-screen h-[100dvh] bg-slate-950/85 backdrop-blur-xl p-3 sm:p-6"></div>
+    <div id="summary-overlay" class="hidden fixed inset-0 z-[190] w-screen h-[100dvh] bg-slate-950/90 backdrop-blur-xl"></div>
+
+    <!-- ================================================================= -->
+    <!-- TRỤ CỘT 3: BẢNG HỒ SƠ TÂM LÝ CUỐI GAME (PSYCHOLOGICAL REPORT CARD) -->
+    <!-- ================================================================= -->
+    <div id="report-card-overlay" class="fixed inset-0 z-[200] w-screen h-[100dvh] bg-black/90 backdrop-blur-2xl hidden items-center justify-center p-3 sm:p-4 select-none overflow-y-auto custom-scrollbar opacity-0 transition-opacity duration-500">
+        <div id="rc-bg-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vh] rounded-full blur-[160px] pointer-events-none transition-colors duration-1000 bg-emerald-600/20"></div>
+
+        <div class="relative w-full max-w-2xl bg-slate-900/85 border border-white/15 rounded-[32px] p-5 sm:p-8 shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden flex flex-col items-center z-10 my-auto transform-gpu transition-all duration-500">
+            <div class="absolute top-3 right-3 sm:top-4 sm:right-4 rotate-12 pointer-events-none z-20 opacity-90 scale-80 sm:scale-100 origin-top-right">
+                <div class="border-4 border-amber-500/80 rounded-full p-2 sm:p-3 bg-slate-950/80 backdrop-blur-md shadow-[0_0_20px_rgba(245,158,11,0.4)] flex items-center justify-center rc-stamp-anim">
+                    <span class="text-[10px] sm:text-xs font-black text-amber-400 tracking-widest uppercase text-center leading-tight">CHỨNG NHẬN<br>HOÀN THÀNH</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center text-center w-full mb-6 border-b border-white/10 pb-5">
+                <span class="text-[11px] bg-white/10 text-slate-300 border border-white/15 px-3.5 py-1 rounded-full font-black uppercase tracking-widest mb-3 shadow-inner">Hồ Sơ Phân Tích Tâm Lý Học Đường</span>
+                <h2 id="rc-char-name" class="text-2xl sm:text-4xl font-black text-white uppercase tracking-tight drop-shadow-md">NHÂN VẬT: MAI</h2>
+                <div id="rc-archetype-badge" class="mt-2 px-4 py-1.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-sm sm:text-base tracking-wide shadow-lg uppercase">
+                    ★ KHỐI PHA LÊ KIÊN CƯỜNG
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 w-full mb-6 items-center">
+                <div class="sm:col-span-5 flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-2xl p-4 relative overflow-hidden h-full min-h-[220px]">
+                    <div id="rc-avatar-glow" class="absolute inset-0 bg-gradient-to-t from-emerald-500/20 to-transparent pointer-events-none"></div>
+                    <img id="rc-avatar-img" src="assets/characters/Char_1_Happy.webp" alt="Avatar" class="max-h-[200px] w-auto object-contain drop-shadow-[0_10px_15px_rgba(0,0,0,0.8)] z-10 transform-gpu">
+                    <span id="rc-sub-title" class="text-[11px] font-bold text-slate-400 mt-2 z-10 text-center uppercase tracking-wider">Người vượt qua bóng tối</span>
+                </div>
+
+                <div class="sm:col-span-7 flex flex-col items-center justify-center bg-black/40 border border-white/10 rounded-2xl p-4 relative h-full">
+                    <span class="text-xs font-black text-slate-300 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> BIỂU ĐỒ NĂNG LỰC TÂM LÝ
+                    </span>
+                    <div class="relative w-full flex justify-center items-center py-2">
+                        <svg id="rc-radar-svg" viewBox="0 0 200 200" class="w-48 h-48 sm:w-56 sm:h-56 overflow-visible drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]"></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-4 w-full mb-6">
+                <div class="bg-black/50 border border-white/10 p-3 rounded-2xl text-center flex flex-col justify-center">
+                    <span class="text-[10px] sm:text-xs text-slate-400 font-extrabold uppercase">Thử Thách</span>
+                    <span id="rc-stat-games" class="text-lg sm:text-2xl font-black text-white mt-0.5">6/6 ★</span>
+                </div>
+                <div class="bg-black/50 border border-white/10 p-3 rounded-2xl text-center flex flex-col justify-center">
+                    <span class="text-[10px] sm:text-xs text-slate-400 font-extrabold uppercase">Lý Trí</span>
+                    <span id="rc-stat-logic" class="text-lg sm:text-2xl font-black text-emerald-400 mt-0.5">95%</span>
+                </div>
+                <div class="bg-black/50 border border-white/10 p-3 rounded-2xl text-center flex flex-col justify-center">
+                    <span class="text-[10px] sm:text-xs text-slate-400 font-extrabold uppercase">Tự Vệ</span>
+                    <span id="rc-stat-defense" class="text-lg sm:text-2xl font-black text-sky-400 mt-0.5">90%</span>
+                </div>
+            </div>
+
+            <div class="w-full bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-2 border-white/15 p-4 sm:p-5 rounded-2xl mb-6 shadow-inner relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
+                <div class="flex items-center gap-2 mb-1.5">
+                    <span class="text-sm font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                        💡 ĐÁNH GIÁ TỪ CHUYÊN GIA TÂM LÝ:
+                    </span>
+                </div>
+                <p id="rc-psych-note" class="text-xs sm:text-sm font-medium text-slate-200 leading-relaxed italic"></p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full">
+                <button id="rc-btn-screenshot" class="flex-1 py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs sm:text-sm tracking-wider uppercase border border-white/15 shadow transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span>📸 LƯU HỒ SƠ</span>
+                </button>
+                <button id="rc-btn-restart-role" class="flex-1 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs sm:text-sm tracking-wider uppercase border border-emerald-400/40 shadow-[0_5px_20px_rgba(16,185,129,0.3)] transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span>🔄 CHƠI LẠI TUYẾN NÀY</span>
+                </button>
+                <button id="rc-btn-menu" class="flex-[1.3] py-4 rounded-xl bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-slate-950 font-black text-xs sm:text-sm tracking-wider uppercase border border-yellow-300/50 shadow-[0_5px_20px_rgba(245,158,11,0.4)] transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span>★ KHÁM PHÁ NHÂN VẬT KHÁC</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ICON CỬA HẬU ADMIN (Góc trái trên cùng) -->
+    <div onclick="openAdminPin()" class="fixed top-4 left-4 z-[300] opacity-10 hover:opacity-100 transition-opacity duration-300 cursor-pointer p-2 drop-shadow-lg">
+        <svg class="w-8 h-8 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+    </div>
+
+    <!-- POPUP NHẬP MÃ PIN ADMIN -->
+    <div id="admin-pin-modal" class="hidden fixed inset-0 z-[400] w-screen h-[100dvh] bg-black/90 backdrop-blur-md flex-col items-center justify-center select-none p-4 animate__animated">
+        <div class="bg-slate-900 border border-amber-500/50 rounded-3xl p-8 max-w-sm w-full text-center shadow-[0_0_30px_rgba(245,158,11,0.3)] animate__animated animate__zoomIn animate__faster">
+            <h3 class="text-xl font-black text-amber-400 mb-2">QUẢN TRỊ VIÊN</h3>
+            <p class="text-sm text-slate-400 mb-6">Nhập mã PIN 6 số để vào bảng điều khiển</p>
+            <input type="password" id="admin-pin-input" maxlength="6" class="w-full tracking-[1em] text-center px-4 py-3 rounded-xl bg-black border border-slate-700 text-white font-bold text-2xl mb-4 focus:outline-none focus:border-amber-500">
+            <div class="flex gap-3">
+                <button onclick="closeAdminPin()" class="flex-1 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">Hủy</button>
+                <button onclick="checkAdminPin()" class="flex-1 py-3 rounded-xl bg-amber-600 text-slate-950 font-black hover:bg-amber-500">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KHỞI TẠO FIREBASE CHO BẢN TEST -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getDatabase, ref, set, push, update, onDisconnect, get, onValue, goOnline, goOffline } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVeJfpXIA5xn5oBb9C8aygQMbQ3rlySig",
+            authDomain: "goc-khuat-playtest.firebaseapp.com",
+            databaseURL: "https://goc-khuat-playtest-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "goc-khuat-playtest",
+            storageBucket: "goc-khuat-playtest.firebasestorage.app",
+            messagingSenderId: "1015159741812",
+            appId: "1:1015159741812:web:0ed14e531a66678aa7e021"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        window.db = getDatabase(app);
+        
+        // Xuất các biến ra window để main.js và tracking.js có thể sử dụng
+        window.fbRef = ref;
+        window.fbSet = set;
+        window.fbPush = push;
+        window.fbUpdate = update;
+        window.fbOnDisconnect = onDisconnect;
+        window.fbGet = get; // Đã thêm hàm get để sửa lỗi 1
+        window.fbOnValue = onValue; // Bổ sung dòng này để lắng nghe bị KICK
+        window.fbGoOnline = goOnline;   // Bổ sung lệnh kết nối thủ công
+        window.fbGoOffline = goOffline; // Bổ sung lệnh ngắt mạng thủ công
+    </script>
+
+    <!-- CÁC SCRIPT DỮ LIỆU -->
+    <script src="js/data/data_mai.js"></script>
+    <script src="js/data/data_minh.js"></script>
+    <script src="js/data/data_linh.js"></script>
+    <script src="js/data/data_nam.js"></script>
+    <script src="js/data/data_index.js"></script>
+    
+    <script src="js/audio.js"></script>
+    <script src="js/minigames.js"></script>
+    
+    <!-- 👉 Thư viện html2canvas trang bị sẵn động cơ xuất ảnh Retina 100% -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script src="js/report_card.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/tracking.js"></script>
+</body>
+</html>
