@@ -1,0 +1,18 @@
+{
+  "rewrites": [
+    { "source": "/test", "destination": "/test-version.html" },
+    { "source": "/play", "destination": "/test-version.html" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}

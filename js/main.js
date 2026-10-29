@@ -1,6 +1,6 @@
 // =================================================================
-// HỆ THỐNG ĐIỀU KHIỂN CHÍNH GÓC KHUẤT (V14.0 - MASTER ULTIMATE)
-// Tích hợp Lệnh Vàng Dọn Dẹp Âm Thanh | Đồng bộ khung thoại 85% | Zero Bug
+// HỆ THỐNG ĐIỀU KHIỂN CHÍNH GÓC KHUẤT (V15.0 - ADAPTIVE VISUAL NOVEL UI)
+// Sân khấu Nhân vật cỡ lớn | Hộp thoại Co giãn ôm sát nội dung | Zero Wasted Space
 // =================================================================
 
 const SAVE_KEY_PREFIX = 'bao_luc_hoc_duong_save_';
@@ -118,7 +118,8 @@ function applyScenePresentation(data) {
         };
         charSpriteEl.src = targetSprite;
 
-        charSpriteEl.className = "mt-auto -mb-2 sm:-mb-5 md:-mb-10 max-h-[26vh] sm:max-h-[36vh] md:max-h-[68vh] lg:max-h-[72vh] w-auto max-w-[95%] md:max-w-none object-contain object-bottom mx-auto transition-all duration-500 select-none drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] transform-gpu relative z-10 animate__animated will-change-transform";
+        // TỐI ƯU KÍCH THƯỚC NHÂN VẬT LỚN & SẮC NÉT TRÊN ĐIỆN THOẠI (38dvh - 44dvh)
+        charSpriteEl.className = "mt-auto -mb-3 sm:-mb-5 md:-mb-8 max-h-[38dvh] sm:max-h-[44dvh] md:max-h-[74dvh] lg:max-h-[80dvh] w-auto max-w-[95%] md:max-w-none object-contain object-bottom mx-auto transition-all duration-500 select-none drop-shadow-[0_12px_28px_rgba(0,0,0,0.85)] transform-gpu relative z-10 animate__animated will-change-transform";
         void charSpriteEl.offsetWidth; 
 
         if (data.charEmotion && ['worried', 'angry', 'cry', 'victory', 'panic', 'rage', 'debate', 'think'].includes(data.charEmotion)) {
@@ -221,11 +222,10 @@ function startRole(role, sceneToLoad) {
     currentPlayingRole = role;
     window.GameStats = { redoCount: 0, minigameWins: 0, minigameTotal: 0 };
     
-    // 👉 LỆNH VÀNG V14.0: Dập tắt mọi âm thanh môi trường cũ trước khi vào vai
     stopAmbient();
     startBGM('bgm_normal');
 
-    bgOverlay.className = "fixed inset-0 bg-black/80 pointer-events-none transition-colors duration-1000 z-10";
+    bgOverlay.className = "fixed inset-0 bg-black/70 pointer-events-none transition-colors duration-1000 z-10";
     roleScreen.classList.add('hidden'); roleScreen.classList.remove('flex');
     gameScreen.classList.remove('hidden'); gameScreen.classList.add('flex', 'animate__fadeIn');
     if (btnResetRole) { btnResetRole.classList.remove('hidden'); btnResetRole.classList.add('flex'); }
@@ -247,7 +247,6 @@ function resetGame() {
     if (transitionTimer) clearTimeout(transitionTimer); 
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     
-    // 👉 LỆNH VÀNG V14.0: Ra menu là phải dọn sạch 100% âm thanh cũ, chống chồng âm iOS
     stopAllAudio();
 
     bgOverlay.className = "fixed inset-0 bg-black/75 backdrop-blur-[3px] pointer-events-none transition-colors duration-1000 z-10";
@@ -260,7 +259,7 @@ function resetGame() {
     if (topNavTitle && topNavSub) {
         topNavTitle.innerText = "CHỌN NHÂN VẬT"; topNavTitle.className = "text-[14px] sm:text-lg md:text-2xl font-black tracking-widest text-white uppercase truncate drop-shadow-md transition-colors duration-300"; topNavSub.innerText = "Giáo dục về vấn nạn bạo lực học đường";
     }
-    gameScreen.className = "hidden w-full h-full shrink-0 flex-col md:flex-row items-stretch transition-opacity duration-300 min-h-0 relative mt-0";
+    gameScreen.className = "hidden w-full h-full shrink-0 flex-col md:flex-row items-stretch md:items-center justify-between md:gap-6 lg:gap-10 transition-opacity duration-300 min-h-0 relative mt-0";
     activeMobileCardIndex = 0; updateMobileDots();
 
     startBGM('bgm_normal');
@@ -271,7 +270,6 @@ function loadScene(sceneId) {
     if (typewriterTimeout) clearTimeout(typewriterTimeout);
     if (resultOverlay) { resultOverlay.classList.add('hidden'); resultOverlay.classList.remove('flex', 'animate__fadeIn'); }
 
-    // 👉 LỆNH VÀNG V14.0: Bắt buộc ngắt tiếng đồng hồ/nhịp tim của màn cũ ngay khi sang cảnh mới!
     stopAmbient();
 
     if (sceneId === 'RESET_GAME') {
@@ -280,7 +278,6 @@ function loadScene(sceneId) {
             window.ReportCardEngine.showReportCard(
                 currentPlayingRole,
                 () => { 
-                    // 👉 LỆNH VÀNG V14.0: Ngắt nhạc chiến thắng và dọn dẹp âm thanh khi bấm "Chơi lại tuyến này"
                     stopAllAudio();
                     startBGM('bgm_normal'); 
                     startRole(currentPlayingRole, currentPlayingRole + '_man_1'); 
@@ -300,9 +297,9 @@ function loadScene(sceneId) {
         localStorage.setItem(SAVE_KEY_PREFIX + currentPlayingRole, sceneId);
     }
 
-    // 👉 ĐỒNG BỘ KHUNG THOẠI 85% TRÊN MOBILE: Ngăn JS viết đè làm thu nhỏ hộp thoại
+    // HỘP THOẠI CO GIÃN THÔNG MINH (h-auto max-h-[66dvh]): Ôm sát nội dung, nhường 35-45% phía trên cho Nhân vật
     if (dialogueContainer) {
-        dialogueContainer.className = `absolute md:relative bottom-0 w-full md:w-7/12 lg:w-1/2 h-[85%] sm:h-[78%] md:h-full p-3 sm:p-5 md:p-8 pb-4 sm:pb-6 md:pb-8 rounded-t-[32px] md:rounded-3xl shadow-[0_-20px_50px_rgba(0,0,0,0.8)] md:shadow-[0_15px_40px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-slate-700/80 md:border glass-glow pointer-events-auto ${data.bgTheme}`;
+        dialogueContainer.className = `relative w-full md:w-7/12 lg:w-[54%] h-auto max-h-[66dvh] sm:max-h-[64dvh] md:max-h-[84dvh] p-4 sm:p-6 md:p-8 pb-5 sm:pb-6 md:pb-8 rounded-t-[28px] sm:rounded-t-[32px] md:rounded-[32px] shadow-[0_-15px_45px_rgba(0,0,0,0.85)] md:shadow-[0_20px_60px_rgba(0,0,0,0.9)] bg-slate-900/95 backdrop-blur-2xl flex flex-col min-h-0 shrink-0 z-20 border-t border-white/15 md:border glass-glow pointer-events-auto my-0 md:my-auto ${data.bgTheme}`;
     }
     
     if (data.bgImage) { container.style.backgroundImage = `url('${data.bgImage}')`; }
@@ -311,7 +308,7 @@ function loadScene(sceneId) {
     if (window.GameAudio) window.GameAudio.setBgmByContext(data);
     if (data.sfx && window.GameAudio) window.GameAudio.playSfx(data.sfx);
 
-    charNameEl.className = `font-black text-[15px] sm:text-xl md:text-2xl pb-1.5 tracking-wide flex items-center gap-2 border-b border-slate-700/50 shrink-0 drop-shadow-md ${data.charColor}`;
+    charNameEl.className = `font-black text-[15px] sm:text-xl md:text-2xl pb-2 tracking-wide flex items-center gap-2 border-b border-slate-700/60 shrink-0 drop-shadow-md ${data.charColor}`;
     charNameEl.innerText = data.charName;
 
     if (data.isResult) {
@@ -328,7 +325,7 @@ function loadScene(sceneId) {
 
     if (data.minigame && window.MinigameEngine) {
         const btn = document.createElement('button');
-        btn.className = "w-full py-5 sm:py-6 rounded-2xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-lg sm:text-xl shadow-[0_10px_30px_rgba(244,63,94,0.5)] border-2 border-rose-400 active:scale-95 transition-all transform-gpu flex items-center justify-center gap-2 animate__animated animate__pulse animate__infinite select-none cursor-pointer mt-2";
+        btn.className = "w-full py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-base sm:text-xl shadow-[0_10px_30px_rgba(244,63,94,0.5)] border-2 border-rose-400 active:scale-95 transition-all transform-gpu flex items-center justify-center gap-2 animate__animated animate__pulse animate__infinite select-none cursor-pointer mt-2";
         btn.innerHTML = `<svg class="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>SẴN SÀNG ĐỐI MẶT THỬ THÁCH!</span>`;
         
         btn.onclick = () => {
@@ -364,7 +361,7 @@ function loadScene(sceneId) {
     finalChoices.forEach((choice, index) => {
         const btn = document.createElement('button');
         btn.classList.add('animate__animated', 'animate__fadeInUp');
-        btn.style.animationDelay = `${index * 0.1}s`; 
+        btn.style.animationDelay = `${index * 0.08}s`; 
 
         if (choice.isUndo) {
             let cleanText = choice.text.replace(/^[↺↩]\s*/, '');
@@ -374,8 +371,8 @@ function loadScene(sceneId) {
                 <span class="drop-shadow-sm relative z-10">${cleanText}</span>
             `;
         } else {
-            btn.className += " relative overflow-hidden w-full text-left bg-slate-800/80 backdrop-blur-md hover:bg-slate-700 border border-slate-600/50 hover:border-slate-400 text-slate-100 p-3 sm:p-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.2)] active:scale-[0.98] text-[13.5px] sm:text-base md:text-lg font-medium flex items-center justify-between group leading-snug shrink-0 transform-gpu";
-            btn.innerHTML = `<span class="pr-3 drop-shadow-md relative z-10">${choice.text}</span><svg class="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 shrink-0 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+            btn.className += " relative overflow-hidden w-full text-left bg-slate-800/85 backdrop-blur-md hover:bg-slate-700/90 border border-slate-600/60 hover:border-emerald-400/60 text-slate-100 p-3.5 sm:p-4 rounded-2xl transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.25)] active:scale-[0.98] text-[13.5px] sm:text-base md:text-lg font-medium flex items-center justify-between group leading-snug shrink-0 transform-gpu";
+            btn.innerHTML = `<span class="pr-3 drop-shadow-md relative z-10">${choice.text}</span><svg class="w-4 h-4 text-slate-400 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all duration-300 shrink-0 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>`;
         }
         
         btn.onclick = (e) => {
@@ -439,15 +436,19 @@ function showResultOverlay(data) {
     resultTitle.className = `text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.9)] mb-3 animate__animated animate__fadeInUp ${data.resultColor || 'text-white'}`;
     
     if (resultImg) {
-        let charId = 1; 
-        let charNameStr = data.charName ? data.charName.toUpperCase() : "";
-        if (charNameStr.includes("LINH")) charId = 2;
-        else if (charNameStr.includes("NAM")) charId = 3;
-        else if (charNameStr.includes("MINH")) charId = 4;
+        if (data.illustration) {
+            resultImg.src = data.illustration;
+        } else {
+            let charId = 1; 
+            let charNameStr = data.charName ? data.charName.toUpperCase() : "";
+            if (charNameStr.includes("LINH")) charId = 2;
+            else if (charNameStr.includes("NAM")) charId = 3;
+            else if (charNameStr.includes("MINH")) charId = 4;
 
-        let randomBase = Math.floor(Math.random() * 7) + 1; 
-        let imageNumber = isSuccess ? (randomBase * 2) : (randomBase * 2 - 1);
-        resultImg.src = `assets/scenes/Char_${charId}_Scene_${imageNumber}.webp`;
+            let randomBase = Math.floor(Math.random() * 7) + 1; 
+            let imageNumber = isSuccess ? (randomBase * 2) : (randomBase * 2 - 1);
+            resultImg.src = `assets/scenes/Char_${charId}_Scene_${imageNumber}.webp`;
+        }
         resultImg.parentElement.style.display = 'flex';
     }
 
